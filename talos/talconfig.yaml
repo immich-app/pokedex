@@ -1,0 +1,79 @@
+---
+clusterName: pokedex
+
+talosVersion: "${talosVersion}"
+kubernetesVersion: "${kubernetesVersion}"
+
+endpoint: https://kube.pokedex.internal.immich.cloud:6443
+certSANs:
+  - kube.pokedex.internal.immich.cloud
+allowSchedulingOnControlPlanes: true
+
+controlPlane:
+  patches:
+    - |-
+      machine:
+        network:
+          nameservers:
+            - 10.10.10.1
+          interfaces:
+            - interface: bond0
+              routes:
+                - network: 0.0.0.0/0
+                  gateway: 10.10.10.1
+              bond:
+                mode: active-backup
+nodes:
+  - hostname: brock
+    controlPlane: true
+    ipAddress: 10.10.10.11
+    installDiskSelector:
+      size: '>= 1TB'
+    networkInterfaces:
+      - interface: bond0
+        addresses:
+          - 10.10.10.11/24
+        bond:
+          deviceSelectors:
+            - permanentAddr: '08:c0:eb:0a:14:91'
+            - permanentAddr: '08:c0:eb:0a:14:90'
+      - deviceSelector:
+          permanentAddr: 'd0:50:99:c3:36:35'
+        ignore: true
+  - hostname: surge
+    controlPlane: true
+    ipAddress: 10.10.10.12
+    installDiskSelector:
+      size: '>= 1TB'
+      wwid: 'naa.500a075121a495a7'
+    networkInterfaces:
+      - interface: bond0
+        addresses:
+          - 10.10.10.12/24
+        bond:
+          deviceSelectors:
+            - permanentAddr: '1c:34:da:0c:d2:b1'
+            - permanentAddr: '1c:34:da:0c:d2:b0'
+      - deviceSelector:
+          permanentAddr: 'd0:50:99:c3:36:4b'
+        ignore: true
+  - hostname: misty
+    controlPlane: true
+    ipAddress: 10.10.10.13
+    installDiskSelector:
+      size: '>= 1TB'
+      wwid: 'naa.500a07511a07d1d3'
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/intel-ucode
+    networkInterfaces:
+      - interface: bond0
+        addresses:
+          - 10.10.10.13/24
+        bond:
+          deviceSelectors:
+            - permanentAddr: 'e4:43:4b:18:3a:00'
+            - permanentAddr: 'e4:43:4b:18:3a:02'
+

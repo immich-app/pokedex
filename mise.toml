@@ -1,0 +1,15 @@
+[tools]
+talosctl = "1.11.6"
+talhelper = "3.0.43"
+kubectl = "1.34.2"
+
+[tasks."talos:genconfig"]
+dir = "talos"
+run = "talhelper genconfig --secret-file <(op inject -i talsecret.yaml)"
+outputs = ["talos/clusterconfig"]
+
+[tasks."talos:apply"]
+dir = "talos"
+depends = ["talos:genconfig"]
+confirm = "Are you sure you want to apply the talos config to all nodes?"
+run = "talhelper gencommand apply | bash"
