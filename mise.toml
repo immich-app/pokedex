@@ -2,6 +2,7 @@
 talosctl = "1.11.6"
 talhelper = "3.0.43"
 kubectl = "1.34.2"
+helmfile = "1.2.3"
 
 [tasks."talos:genconfig"]
 dir = "talos"
