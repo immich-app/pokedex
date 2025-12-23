@@ -11,4 +11,3 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: operator-values
-      valuesKey: values.yaml

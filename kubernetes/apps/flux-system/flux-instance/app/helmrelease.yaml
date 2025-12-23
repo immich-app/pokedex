@@ -9,6 +9,5 @@ spec:
     name: flux-instance
   interval: 1h
   valuesFrom:
-    - type: ConfigMap
+    - kind: ConfigMap
       name: instance-values
-      key: values.yaml
