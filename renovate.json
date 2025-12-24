@@ -1,0 +1,109 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "local>immich-app/.github:renovate-config"
+  ],
+  "automerge": true,
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0,
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "/gha-runner/",
+        "/dind/"
+      ],
+      "groupName": "github actions runners"
+    },
+    {
+      "matchFileNames": [".mise/config.toml"],
+      "groupName": "mise"
+    },
+    {
+      "matchPackageNames": [
+        "/discord-bot/"
+      ],
+      "pinDigests": false
+    },
+    {
+      "description": "Flux Group",
+      "groupName": "flux",
+      "matchPackageNames": ["/flux/"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group",
+      },
+      "minimumGroupSize": 3,
+    },
+    {
+      "matchPackageNames": [
+        "/talos/",
+        "/sidero/"
+      ],
+      "groupName": "talos"
+    },
+    {
+      "matchPackageNames": [
+        "/kubernetes/",
+        "/kubectl/",
+        "/kubelet/"
+      ],
+      "groupName": "kubernetes"
+    },
+    {
+      "description": "Override Helmfile Dependency Name",
+      "matchDatasources": ["docker"],
+      "matchManagers": ["helmfile"],
+      "overrideDepName": "{{packageName}}",
+    },
+    {
+      "groupName": "immich",
+      "minimumReleaseAge": "0",
+      "matchPackageNames": [
+        "immich-app/immich"
+      ]
+    },
+    {
+      "matchPackageNames": [
+        "/zitadel/"
+      ],
+      "groupName": "zitadel"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["major"],
+      "groupName": null
+    }
+  ],
+  "flux": {
+    "managerFilePatterns": [
+      "/(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$/"
+    ]
+  },
+  "helm-values": {
+    "managerFilePatterns": [
+      "/(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$/"
+    ]
+  },
+  "kubernetes": {
+    "managerFilePatterns": [
+      "/(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$/"
+    ]
+  },
+  "kustomize": {
+    "managerFilePatterns": [
+      "/(^|/)kustomization\\.ya?ml(?:\\.j2)?$/"
+    ]
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Process OCI dependencies",
+      "managerFilePatterns": [
+        "/\\.yaml(?:\\.j2)?$/",
+      ],
+      "matchStrings": [
+        "oci://(?<depName>[^:]+):(?<currentValue>\\S+)",
+      ],
+      "datasourceTemplate": "docker",
+    }
+  ]
+}
