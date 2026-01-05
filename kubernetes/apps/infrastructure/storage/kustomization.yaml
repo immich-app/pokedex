@@ -5,4 +5,5 @@ namespace: storage
 
 resources:
   - namespace.yaml
+  - ./snapshot-controller/ks.yaml
   - ./rook-ceph/ks.yaml

@@ -4,6 +4,8 @@ kind: Kustomization
 metadata:
   name: rook-ceph
 spec:
+  dependsOn:
+    - name: snapshot-controller
   interval: 1h
   path: ./kubernetes/apps/infrastructure/storage/rook-ceph/operator
   prune: true
