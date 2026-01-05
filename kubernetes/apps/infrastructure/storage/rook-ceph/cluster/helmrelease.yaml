@@ -9,6 +9,7 @@ spec:
     name: rook-ceph-cluster
   interval: 1h
   values:
+    operatorNamespace: storage
     cephClusterSpec:
       cephConfig:
         global:
