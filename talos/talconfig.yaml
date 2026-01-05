@@ -14,8 +14,6 @@ controlPlane:
     - |-
       machine:
         network:
-          nameservers:
-            - 10.10.10.1
           interfaces:
             - interface: bond0
               routes:
@@ -23,12 +21,18 @@ controlPlane:
                   gateway: 10.10.10.1
               bond:
                 mode: active-backup
+
 nodes:
   - hostname: brock
     controlPlane: true
     ipAddress: 10.10.10.11
     installDiskSelector:
       size: '>= 1TB'
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/intel-ucode
     networkInterfaces:
       - interface: bond0
         addresses:
@@ -46,6 +50,11 @@ nodes:
     installDiskSelector:
       size: '>= 1TB'
       wwid: 'naa.500a075121a495a7'
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/intel-ucode
     networkInterfaces:
       - interface: bond0
         addresses:
@@ -76,4 +85,12 @@ nodes:
           deviceSelectors:
             - permanentAddr: 'e4:43:4b:18:3a:00'
             - permanentAddr: 'e4:43:4b:18:3a:02'
-
+  - hostname: vaporeon
+    ipAddress: 10.10.10.200
+    installDiskSelector:
+      type: nvme
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/amd-ucode
