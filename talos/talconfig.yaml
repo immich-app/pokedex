@@ -71,7 +71,7 @@ nodes:
     ipAddress: 10.10.10.13
     installDiskSelector:
       size: '>= 1TB'
-      wwid: 'naa.500a07511a07d1d3'
+      wwid: 'naa.500117310012436c'
     schematic:
       customization:
         systemExtensions:
