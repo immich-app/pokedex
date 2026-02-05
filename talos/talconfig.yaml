@@ -94,3 +94,30 @@ nodes:
         systemExtensions:
           officialExtensions:
             - siderolabs/amd-ucode
+  - hostname: bulbasaur
+    ipAddress: 10.10.10.176
+    installDiskSelector:
+      type: nvme
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/amd-ucode
+  - hostname: geodude
+    ipAddress: 10.10.10.132
+    installDiskSelector:
+      type: nvme
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/intel-ucode
+  - hostname: sylveon
+    ipAddress: 10.10.10.245
+    installDiskSelector:
+      type: ssd
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/intel-ucode
