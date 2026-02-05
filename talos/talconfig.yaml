@@ -9,6 +9,9 @@ certSANs:
   - kube.pokedex.internal.immich.cloud
 allowSchedulingOnControlPlanes: true
 
+cniConfig:
+  name: none
+
 controlPlane:
   patches:
     - |-
@@ -21,7 +24,10 @@ controlPlane:
                   gateway: 10.10.10.1
               bond:
                 mode: active-backup
-
+    - |-
+      cluster:
+        proxy:
+          disabled: true
 nodes:
   - hostname: brock
     controlPlane: true
