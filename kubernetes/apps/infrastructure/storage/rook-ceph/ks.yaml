@@ -30,7 +30,7 @@ spec:
       namespace: storage
     - apiVersion: ceph.rook.io/v1
       kind: CephCluster
-      namespace: rook-ceph
+      namespace: storage
       name: storage
   healthCheckExprs:
     - apiVersion: ceph.rook.io/v1
