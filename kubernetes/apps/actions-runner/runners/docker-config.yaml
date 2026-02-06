@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: docker-daemon-config
+data:
+  daemon.json: |
+    {
+      "mtu": 1450,
+      "default-network-opts": {
+        "bridge": {
+          "com.docker.network.driver.mtu": "1450"
+        }
+      },
+      "registry-mirrors": ["http://registry.actions-cache.svc.cluster.local:5000"]
+    }

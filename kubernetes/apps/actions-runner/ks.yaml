@@ -1,0 +1,57 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: actions-runner-cache
+  namespace: flux-system
+spec:
+  targetNamespace: actions-cache
+  path: ./kubernetes/apps/actions-runner/cache
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: actions-runner-controller
+  namespace: flux-system
+spec:
+  targetNamespace: actions-controller
+  path: ./kubernetes/apps/actions-runner/controller
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: actions-runners
+  namespace: flux-system
+spec:
+  targetNamespace: actions-runners
+  dependsOn:
+    - name: actions-runner-controller
+    - name: actions-runner-cache
+  path: ./kubernetes/apps/actions-runner/runners
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m

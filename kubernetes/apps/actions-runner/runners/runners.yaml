@@ -1,0 +1,98 @@
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSet
+metadata:
+  name: actions-runners
+spec:
+  inputs:
+    - name: pokedex-general
+      minRunners: 0
+      maxRunners: 8
+      resources:
+        limits:
+          cpu: "4"
+          memory: "8Gi"
+
+  resources:
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      metadata:
+        name: actions-runner-<< inputs.name >>
+      spec:
+        interval: 30m
+        chartRef:
+          kind: OCIRepository
+          name: gha-runner-scale-set
+        values:
+          runnerScaleSetName: << inputs.name >>
+          githubConfigUrl: https://github.com/immich-app
+          minRunners: << inputs.minRunners | int >>
+          maxRunners: << inputs.maxRunners | int >>
+          githubConfigSecret: actions-controller-github-auth
+          template:
+            spec:
+              initContainers:
+                - name: init-dind-externals
+                  image: ghcr.io/immich-app/actions-runner:main
+                  command: ["cp"]
+                  args: ["-r", "-v", "/home/runner/externals/.", "/home/runner/tmpDir/"]
+                  volumeMounts:
+                    - name: dind-externals
+                      mountPath: /home/runner/tmpDir
+              containers:
+                - name: runner
+                  image: ghcr.io/immich-app/actions-runner:main
+                  imagePullPolicy: Always
+                  command: ["/home/runner/run.sh"]
+                  env:
+                    - name: DOCKER_HOST
+                      value: unix:///run/docker/docker.sock
+                    - name: RUNNER_WAIT_FOR_DOCKER_IN_SECONDS
+                      value: '120'
+                    - name: CUSTOM_ACTIONS_RESULTS_URL
+                      value: "http://actions-cache.actions-cache.svc.cluster.local:3000"
+                  volumeMounts:
+                    - name: work
+                      mountPath: /home/runner/_work
+                    - name: dind-sock
+                      mountPath: /run/docker
+                      readOnly: true
+                - name: dind
+                  image: docker:29.1.4-dind@sha256:d95427251fd155cd69a03311a8c4edf6d0778595444afc2d2c800a156eb2ecac
+                  args:
+                    - dockerd
+                    - --host=unix:///run/docker/docker.sock
+                    - --group=$(DOCKER_GROUP_GID)
+                  env:
+                    - name: DOCKER_GROUP_GID
+                      value: "123"
+                  securityContext:
+                    privileged: true
+                  volumeMounts:
+                    - name: work
+                      mountPath: /home/runner/_work
+                    - name: dind-sock
+                      mountPath: /run/docker
+                    - name: dind-externals
+                      mountPath: /home/runner/externals
+                    - name: varlibdocker
+                      mountPath: /var/lib/docker
+                    - name: daemon-json
+                      mountPath: /etc/docker/daemon.json
+                      readOnly: true
+                      subPath: daemon.json
+              resources: << inputs.resources | toYaml | nindent 8 >>
+              volumes:
+                - name: work
+                  emptyDir: {}
+                - name: dind-sock
+                  emptyDir: {}
+                - name: dind-externals
+                  emptyDir: {}
+                - name: varlibdocker
+                  emptyDir: {}
+                - name: daemon-json
+                  configMap:
+                    name: docker-daemon-config
+          controllerServiceAccount:
+            namespace: actions-controller
+            name: actions-runner-controller-gha-rs-controller
