@@ -81,7 +81,7 @@ spec:
                       mountPath: /etc/docker/daemon.json
                       readOnly: true
                       subPath: daemon.json
-              resources: << inputs.resources | toYaml | nindent 8 >>
+              resources: << inputs.resources | toYaml | nindent 10 >>
               volumes:
                 - name: work
                   emptyDir: {}
