@@ -12,6 +12,30 @@ spec:
           cpu: "4"
           memory: "8Gi"
 
+    - name: pokedex-large
+      minRunners: 1
+      maxRunners: 2
+      resources:
+        limits:
+          cpu: "8"
+          memory: "32Gi"
+
+    - name: pokedex-huge
+      minRunners: 0
+      maxRunners: 2
+      resources:
+        limits:
+          cpu: "24"
+          memory: "50Gi"
+
+    - name: pokedex-giant
+      minRunners: 0
+      maxRunners: 1
+      resources:
+        limits:
+          cpu: "48"
+          memory: "100Gi"
+
   resources:
     - apiVersion: helm.toolkit.fluxcd.io/v2
       kind: HelmRelease
