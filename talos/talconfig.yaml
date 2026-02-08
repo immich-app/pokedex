@@ -127,3 +127,39 @@ nodes:
         systemExtensions:
           officialExtensions:
             - siderolabs/intel-ucode
+  - hostname: eevee
+    ipAddress: 10.10.10.222
+    installDiskSelector:
+      type: nvme
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/intel-ucode
+  - hostname: flareon
+    ipAddress: 10.10.10.51
+    installDiskSelector:
+      type: ssd
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/intel-ucode
+  - hostname: magikarp
+    ipAddress: 10.10.10.63
+    installDiskSelector:
+      type: ssd
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/intel-ucode
+  - hostname: pikachu
+    ipAddress: 10.10.10.23
+    installDiskSelector:
+      type: nvme
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/intel-ucode
