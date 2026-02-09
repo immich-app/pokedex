@@ -30,7 +30,7 @@ spec:
 
     - name: pokedex-giant
       minRunners: 0
-      maxRunners: 2
+      maxRunners: 1
       resources:
         limits:
           cpu: "48"
