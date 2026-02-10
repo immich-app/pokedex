@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - ./ocirepository.yaml
   - ./falcondev-actions-cache.yaml
+  - ./registry-cache.yaml
