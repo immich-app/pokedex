@@ -12,7 +12,7 @@ spec:
         limits:
           cpu: "4"
           memory: "8Gi"
-    
+
     - name: pokedex-general
       org: immich-app
       minRunners: 0
@@ -65,7 +65,7 @@ spec:
           githubConfigUrl: https://github.com/<< inputs.org >>
           minRunners: << inputs.minRunners | int >>
           maxRunners: << inputs.maxRunners | int >>
-          githubConfigSecret: actions-controller-github-auth
+          githubConfigSecret: << inputs.org >>-runner-auth
           template:
             spec:
               initContainers:
