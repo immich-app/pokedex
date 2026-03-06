@@ -5,6 +5,16 @@ metadata:
 spec:
   inputs:
     - name: pokedex-general
+      org: futo-org
+      minRunners: 0
+      maxRunners: 8
+      resources:
+        limits:
+          cpu: "4"
+          memory: "8Gi"
+    
+    - name: pokedex-general
+      org: immich-app
       minRunners: 0
       maxRunners: 8
       resources:
@@ -13,6 +23,7 @@ spec:
           memory: "8Gi"
 
     - name: pokedex-large
+      org: immich-app
       minRunners: 1
       maxRunners: 2
       resources:
@@ -21,6 +32,7 @@ spec:
           memory: "32Gi"
 
     - name: pokedex-huge
+      org: immich-app
       minRunners: 0
       maxRunners: 2
       resources:
@@ -29,6 +41,7 @@ spec:
           memory: "50Gi"
 
     - name: pokedex-giant
+      org: immich-app
       minRunners: 0
       maxRunners: 1
       resources:
@@ -49,7 +62,7 @@ spec:
           name: gha-runner-scale-set
         values:
           runnerScaleSetName: << inputs.name >>
-          githubConfigUrl: https://github.com/immich-app
+          githubConfigUrl: https://github.com/<< inputs.org >>
           minRunners: << inputs.minRunners | int >>
           maxRunners: << inputs.maxRunners | int >>
           githubConfigSecret: actions-controller-github-auth
