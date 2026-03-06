@@ -4,7 +4,7 @@ metadata:
   name: actions-runners
 spec:
   inputs:
-    - name: pokedex-general
+    - name: fhs-bicycle
       org: futo-org
       minRunners: 0
       maxRunners: 8
