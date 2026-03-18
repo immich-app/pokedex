@@ -57,13 +57,11 @@ spec:
           - name: "misty"
             devices:
               - name: "/dev/disk/by-id/wwn-0x500a07511a07d222"
-              - name: "/dev/disk/by-id/wwn-0x500a07511a07cf91"
-              - name: "/dev/disk/by-id/wwn-0x500a07511b44df51"
-              - name: "/dev/disk/by-id/wwn-0x500a07511a07ba4a"
-              - name: "/dev/disk/by-id/wwn-0x500a07511a07cfee"
-              - name: "/dev/disk/by-id/wwn-0x500a07511b44c4d8"
               - name: "/dev/disk/by-id/wwn-0x5001173100400e03"
-              - name: "/dev/disk/by-id/wwn-0x500a07511a07d1d3"
+              - name: "/dev/disk/by-id/wwn-0x500117310012436c"
+              - name: "/dev/disk/by-id/wwn-0x50011731004fd770"
+              - name: "/dev/disk/by-id/wwn-0x50011731004fd920"
+              - name: "/dev/disk/by-id/wwn-0x500a075119f6143c"
         config:
           osdsPerDevice: "1"
     cephBlockPools:
