@@ -58,7 +58,6 @@ spec:
             devices:
               - name: "/dev/disk/by-id/wwn-0x500a07511a07d222"
               - name: "/dev/disk/by-id/wwn-0x5001173100400e03"
-              - name: "/dev/disk/by-id/wwn-0x500117310012436c"
               - name: "/dev/disk/by-id/wwn-0x50011731004fd770"
               - name: "/dev/disk/by-id/wwn-0x50011731004fd920"
               - name: "/dev/disk/by-id/wwn-0x500a075119f6143c"
