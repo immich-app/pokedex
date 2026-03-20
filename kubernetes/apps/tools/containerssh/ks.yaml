@@ -2,6 +2,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app containerssh-secrets
+  namespace: tools
 spec:
   commonMetadata:
     labels:
@@ -20,6 +21,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app containerssh
+  namespace: tools
 spec:
   commonMetadata:
     labels:
