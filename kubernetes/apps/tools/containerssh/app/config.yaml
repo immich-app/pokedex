@@ -35,7 +35,7 @@ data:
               image: containerssh/containerssh-guest-image
               resources:
                 limits:
-                  cpu: "32"
+                  cpu: "80"
                   memory: "192Gi"
 #    TODO: custom image with tools installed + nonroot true
 #              securityContext:
