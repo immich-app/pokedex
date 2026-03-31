@@ -24,7 +24,7 @@ spec:
 
     - name: pokedex-large
       org: immich-app
-      minRunners: 1
+      minRunners: 0
       maxRunners: 2
       resources:
         limits:
@@ -46,8 +46,8 @@ spec:
       maxRunners: 1
       resources:
         limits:
-          cpu: "48"
-          memory: "100Gi"
+          cpu: "80"
+          memory: "200Gi"
 
   resources:
     - apiVersion: helm.toolkit.fluxcd.io/v2
