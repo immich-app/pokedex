@@ -48,6 +48,11 @@ spec:
         limits:
           cpu: "80"
           memory: "200Gi"
+      envFrom:
+        - configMapRef:
+            name: pokedex-giant-bucket
+        - secretRef:
+            name: pokedex-giant-bucket
 
   resources:
     - apiVersion: helm.toolkit.fluxcd.io/v2
@@ -81,6 +86,7 @@ spec:
                   image: ghcr.io/immich-app/actions-runner:main
                   imagePullPolicy: Always
                   command: ["/home/runner/run.sh"]
+                  envFrom: << inputs.envFrom | default list | toYaml | nindent 20 >>
                   env:
                     - name: DOCKER_HOST
                       value: unix:///run/docker/docker.sock

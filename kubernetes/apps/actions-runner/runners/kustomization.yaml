@@ -6,3 +6,4 @@ resources:
   - ./secrets.yaml
   - ./docker-config.yaml
   - ./runners.yaml
+  - ./bucket.yaml

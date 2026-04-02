@@ -1,0 +1,8 @@
+---
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: pokedex-giant-bucket
+spec:
+  generateBucketName: pokedex-giant
+  storageClassName: ceph-bucket
