@@ -12,6 +12,7 @@ spec:
         limits:
           cpu: "4"
           memory: "8Gi"
+      envFrom: []
 
     - name: pokedex-general
       org: immich-app
@@ -21,6 +22,7 @@ spec:
         limits:
           cpu: "4"
           memory: "8Gi"
+      envFrom: []
 
     - name: pokedex-large
       org: immich-app
@@ -30,6 +32,7 @@ spec:
         limits:
           cpu: "8"
           memory: "32Gi"
+      envFrom: []
 
     - name: pokedex-huge
       org: immich-app
@@ -39,6 +42,7 @@ spec:
         limits:
           cpu: "24"
           memory: "50Gi"
+      envFrom: []
 
     - name: pokedex-giant
       org: immich-app
@@ -86,7 +90,7 @@ spec:
                   image: ghcr.io/immich-app/actions-runner:main
                   imagePullPolicy: Always
                   command: ["/home/runner/run.sh"]
-                  envFrom: << inputs.envFrom | default list | toYaml | nindent 20 >>
+                  envFrom: << inputs.envFrom | toYaml | nindent 20 >>
                   env:
                     - name: DOCKER_HOST
                       value: unix:///run/docker/docker.sock
