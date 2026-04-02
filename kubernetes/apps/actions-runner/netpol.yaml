@@ -48,7 +48,7 @@ spec:
           matchLabels:
             app: rook-ceph-rgw
       ports:
-        - port: 80
+        - port: 8080
           protocol: TCP
     - to:
       - ipBlock:
