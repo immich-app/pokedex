@@ -30,13 +30,14 @@ data:
         metadata:
           namespace: containerssh-guests
         spec:
+          nodeName: misty
           containers:
             - name: shell
               image: containerssh/containerssh-guest-image
               resources:
                 limits:
-                  cpu: "80"
-                  memory: "192Gi"
+                  cpu: "8"
+                  memory: "48Gi"
 #    TODO: custom image with tools installed + nonroot true
 #              securityContext:
 #                runAsNonRoot: true
