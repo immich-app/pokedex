@@ -35,19 +35,31 @@
       "minimumGroupSize": 3,
     },
     {
-      "matchPackageNames": [
-        "/talos/",
-        "/sidero/"
-      ],
-      "groupName": "talos"
+      "description": "Kubernetes Group",
+      "groupName": "kubernetes",
+      "matchDepNames": ["/kubectl/", "/kubelet/"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group",
+      },
     },
     {
-      "matchPackageNames": [
-        "/kubernetes/",
-        "/kubectl/",
-        "/kubelet/"
-      ],
-      "groupName": "kubernetes"
+      "description": "Talos Group",
+      "groupName": "talos",
+      "matchPackageNames": ["/installer/", "/talos/"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group",
+      },
+      "minimumGroupSize": 2,
+    },
+    {
+      "description": "Rook-Ceph Group",
+      "groupName": "rook-ceph",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["/rook-ceph/", "/rook-ceph-cluster/"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group",
+      },
+      "minimumGroupSize": 2,
     },
     {
       "description": "Override Helmfile Dependency Name",
@@ -72,6 +84,11 @@
       "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["major"],
       "groupName": null
+    },
+    {
+      "description": "Flux OCIRepository tag is a single field — appending @sha256 makes the registry 404",
+      "matchFileNames": ["**/*ocirepository.yaml"],
+      "pinDigests": false,
     }
   ],
   "flux": {
