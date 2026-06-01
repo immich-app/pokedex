@@ -1,5 +1,5 @@
 [tools]
-talosctl = "1.11.6"
+talosctl = "1.13.3"
 talhelper = "3.0.43"
 kubectl = "1.34.2"
 helmfile = "1.2.3"
