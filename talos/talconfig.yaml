@@ -28,6 +28,15 @@ controlPlane:
       cluster:
         proxy:
           disabled: true
+    - |-
+      machine:
+        features:
+          kubernetesTalosAPIAccess:
+            enabled: true
+            allowedKubernetesNamespaces:
+              - system-upgrade
+            allowedRoles:
+              - os:admin
 nodes:
   - hostname: brock
     controlPlane: true
