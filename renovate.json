@@ -3,7 +3,8 @@
   "extends": [
     "local>immich-app/.github:renovate-config"
   ],
-  "automerge": true,
+  "baseBranchPatterns": ["development"],
+  "automerge": false,
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
   "packageRules": [
