@@ -11,6 +11,12 @@ k8sServicePort: 7445
 
 kubeProxyReplacement: true
 
+l2announcements:
+  enabled: true
+k8sClientRateLimit:
+  qps: 10
+  burst: 20
+
 rollOutCiliumPods: true
 
 operator:
