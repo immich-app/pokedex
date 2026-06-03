@@ -1,0 +1,21 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: ListenerSet
+metadata:
+  name: loopdedupe
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+spec:
+  parentRef:
+    name: external
+    namespace: network
+    kind: Gateway
+  listeners:
+    - name: https
+      hostname: loopdedupe.internal.immich.cloud
+      port: 443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: loopdedupe-tls

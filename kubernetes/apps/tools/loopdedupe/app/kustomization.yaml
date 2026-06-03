@@ -4,3 +4,6 @@ kind: Kustomization
 resources:
   - ./ocirepository.yaml
   - ./helmrelease.yaml
+  - ./listenerset.yaml
+  - ./httproute.yaml
+  - ./securitypolicy.yaml

@@ -1,0 +1,23 @@
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: loopdedupe
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: loopdedupe
+  oidc:
+    provider:
+      issuer: https://zitadel.internal.immich.cloud
+    clientIDRef:
+      name: loopdedupe-oidc
+    clientSecret:
+      name: loopdedupe-oidc
+    redirectURL: https://loopdedupe.internal.immich.cloud/oauth2/callback
+    logoutPath: /oauth2/sign_out
+    scopes:
+      - openid
+      - profile
+      - email
