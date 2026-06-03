@@ -13,6 +13,7 @@ spec:
       namespace: secrets
   path: ./kubernetes/apps/tools/loopdedupe/secrets
   prune: true
+  targetNamespace: tools
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -34,6 +35,7 @@ spec:
       namespace: cnpg-system
   path: ./kubernetes/apps/tools/loopdedupe/database
   prune: true
+  targetNamespace: tools
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -61,6 +63,7 @@ spec:
     - name: loopdedupe-database
   path: ./kubernetes/apps/tools/loopdedupe/app
   prune: true
+  targetNamespace: tools
   sourceRef:
     kind: GitRepository
     name: flux-system
