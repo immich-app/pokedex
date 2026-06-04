@@ -46,6 +46,7 @@ nodes:
         systemExtensions:
           officialExtensions:
             - siderolabs/intel-ucode
+            - siderolabs/amdgpu
     networkInterfaces:
       - interface: bond0
         addresses:
@@ -110,6 +111,7 @@ nodes:
         systemExtensions:
           officialExtensions:
             - siderolabs/amd-ucode
+            - siderolabs/amdgpu
   - hostname: bulbasaur
     ipAddress: 10.10.10.176
     installDiskSelector:
@@ -119,6 +121,7 @@ nodes:
         systemExtensions:
           officialExtensions:
             - siderolabs/amd-ucode
+            - siderolabs/amdgpu
   - hostname: geodude
     ipAddress: 10.10.10.132
     installDiskSelector:
