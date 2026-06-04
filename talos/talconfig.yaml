@@ -83,6 +83,8 @@ nodes:
             - siderolabs/intel-ucode
             - siderolabs/nvidia-open-gpu-kernel-modules-production
             - siderolabs/nvidia-container-toolkit-production
+            - siderolabs/i915
+            - siderolabs/xe
     patches:
       - |-
         machine:
@@ -159,6 +161,7 @@ nodes:
         systemExtensions:
           officialExtensions:
             - siderolabs/intel-ucode
+            - siderolabs/i915
   - hostname: sylveon
     ipAddress: 10.10.10.245
     installDiskSelector:
@@ -168,6 +171,7 @@ nodes:
         systemExtensions:
           officialExtensions:
             - siderolabs/intel-ucode
+            - siderolabs/i915
   - hostname: eevee
     ipAddress: 10.10.10.222
     installDiskSelector:
@@ -177,6 +181,7 @@ nodes:
         systemExtensions:
           officialExtensions:
             - siderolabs/intel-ucode
+            - siderolabs/xe
   - hostname: flareon
     ipAddress: 10.10.10.51
     installDiskSelector:
@@ -186,6 +191,7 @@ nodes:
         systemExtensions:
           officialExtensions:
             - siderolabs/intel-ucode
+            - siderolabs/i915
   - hostname: magikarp
     ipAddress: 10.10.10.63
     installDiskSelector:
@@ -195,6 +201,7 @@ nodes:
         systemExtensions:
           officialExtensions:
             - siderolabs/intel-ucode
+            - siderolabs/i915
   - hostname: pikachu
     ipAddress: 10.10.10.23
     installDiskSelector:
@@ -204,3 +211,4 @@ nodes:
         systemExtensions:
           officialExtensions:
             - siderolabs/intel-ucode
+            - siderolabs/i915
