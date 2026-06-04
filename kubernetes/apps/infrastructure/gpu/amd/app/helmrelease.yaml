@@ -1,0 +1,16 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: amd-gpu-dra-driver
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: amd-gpu-dra-driver
+  interval: 1h
+  values:
+    cdi:
+      dynamicPath: /run/cdi
+    kubeletPlugin:
+      nodeSelector:
+        feature.node.kubernetes.io/pci-0300_1002.present: "true"
