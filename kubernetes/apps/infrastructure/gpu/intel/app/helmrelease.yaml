@@ -12,3 +12,7 @@ spec:
     kubeletPlugin:
       nodeSelector:
         feature.node.kubernetes.io/pci-0300_8086.present: "true"
+    # Talos /etc is read-only; relocate CDI spec dirs to writable /var.
+    cdi:
+      staticPath: /var/cdi/static
+      dynamicPath: /var/cdi/dynamic
