@@ -18,3 +18,15 @@ spec:
     resources:
       computeDomains:
         enabled: false
+    kubeletPlugin:
+      # Chart default targets the vendor-only NFD label (pci-10de); our NFD emits
+      # the class+vendor form, so match that instead.
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: feature.node.kubernetes.io/pci-0300_10de.present
+                    operator: In
+                    values:
+                      - "true"
