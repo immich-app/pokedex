@@ -7,3 +7,4 @@ resources:
   - ./docker-config.yaml
   - ./runners.yaml
   - ./bucket.yaml
+  - ./pdb.yaml
