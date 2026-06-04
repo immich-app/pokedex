@@ -47,6 +47,17 @@ nodes:
           officialExtensions:
             - siderolabs/intel-ucode
             - siderolabs/amdgpu
+            - siderolabs/nonfree-kmod-nvidia-lts
+            - siderolabs/nvidia-container-toolkit-lts
+    patches:
+      - |-
+        machine:
+          kernel:
+            modules:
+              - name: nvidia
+              - name: nvidia_uvm
+              - name: nvidia_drm
+              - name: nvidia_modeset
     networkInterfaces:
       - interface: bond0
         addresses:
@@ -70,6 +81,17 @@ nodes:
         systemExtensions:
           officialExtensions:
             - siderolabs/intel-ucode
+            - siderolabs/nvidia-open-gpu-kernel-modules-production
+            - siderolabs/nvidia-container-toolkit-production
+    patches:
+      - |-
+        machine:
+          kernel:
+            modules:
+              - name: nvidia
+              - name: nvidia_uvm
+              - name: nvidia_drm
+              - name: nvidia_modeset
     networkInterfaces:
       - interface: bond0
         addresses:
