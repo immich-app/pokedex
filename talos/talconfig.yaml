@@ -181,7 +181,7 @@ nodes:
         systemExtensions:
           officialExtensions:
             - siderolabs/intel-ucode
-            - siderolabs/xe
+            - siderolabs/i915
   - hostname: flareon
     ipAddress: 10.10.10.51
     installDiskSelector:
