@@ -6,3 +6,4 @@ resources:
   - namespace.yaml
   - ./amd/ks.yaml
   - ./nvidia/ks.yaml
+  - ./intel/ks.yaml
