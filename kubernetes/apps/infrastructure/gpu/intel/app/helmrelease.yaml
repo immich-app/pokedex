@@ -12,7 +12,8 @@ spec:
     kubeletPlugin:
       nodeSelector:
         feature.node.kubernetes.io/pci-0300_8086.present: "true"
-    # Talos /etc is read-only; relocate CDI spec dirs to writable /var.
+    # Talos /etc is read-only; use /run/cdi (writable, and the only dir containerd
+    # scans by default) so no containerd cdi_spec_dirs patch is needed.
     cdi:
-      staticPath: /var/cdi/static
-      dynamicPath: /var/cdi/dynamic
+      staticPath: /run/cdi
+      dynamicPath: /run/cdi
