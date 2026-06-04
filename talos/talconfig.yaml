@@ -22,8 +22,6 @@ controlPlane:
               routes:
                 - network: 0.0.0.0/0
                   gateway: 10.10.10.1
-              bond:
-                mode: active-backup
     - |-
       cluster:
         proxy:
@@ -53,6 +51,7 @@ nodes:
         addresses:
           - 10.10.10.11/24
         bond:
+          mode: active-backup
           deviceSelectors:
             - permanentAddr: '08:c0:eb:0a:14:91'
             - permanentAddr: '08:c0:eb:0a:14:90'
@@ -75,6 +74,7 @@ nodes:
         addresses:
           - 10.10.10.12/24
         bond:
+          mode: active-backup
           deviceSelectors:
             - permanentAddr: '1c:34:da:0c:d2:b1'
             - permanentAddr: '1c:34:da:0c:d2:b0'
@@ -97,6 +97,7 @@ nodes:
         addresses:
           - 10.10.10.13/24
         bond:
+          mode: active-backup
           deviceSelectors:
             - permanentAddr: 'e4:43:4b:18:3a:00'
             - permanentAddr: 'e4:43:4b:18:3a:02'
