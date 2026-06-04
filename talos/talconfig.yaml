@@ -134,6 +134,12 @@ nodes:
           officialExtensions:
             - siderolabs/amd-ucode
             - siderolabs/amdgpu
+    patches:
+      - |-
+        machine:
+          install:
+            extraKernelArgs:
+              - kexec_load_disabled=1
   - hostname: bulbasaur
     ipAddress: 10.10.10.176
     installDiskSelector:
