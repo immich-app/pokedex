@@ -188,7 +188,7 @@ nodes:
             - siderolabs/intel-ucode
             - siderolabs/i915
   - hostname: flareon
-    ipAddress: 10.10.10.51
+    ipAddress: 10.10.10.32
     installDiskSelector:
       type: ssd
     schematic:
