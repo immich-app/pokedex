@@ -10,7 +10,7 @@ spec:
       name: loopdedupe
   oidc:
     provider:
-      issuer: https://zitadel.internal.immich.cloud
+      issuer: https://auth.internal.futo.org
     clientIDRef:
       name: loopdedupe-oidc
     clientSecret:
