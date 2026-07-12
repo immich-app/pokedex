@@ -17,11 +17,21 @@ spec:
     - name: pokedex-general
       org: immich-app
       minRunners: 0
-      maxRunners: 8
+      maxRunners: 16
       resources:
         limits:
           cpu: "4"
           memory: "8Gi"
+      envFrom: []
+
+    - name: pokedex-medium
+      org: immich-app
+      minRunners: 0
+      maxRunners: 8
+      resources:
+        limits:
+          cpu: "8"
+          memory: "16Gi"
       envFrom: []
 
     - name: pokedex-large
