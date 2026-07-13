@@ -5,3 +5,4 @@ resources:
   - ./ocirepository.yaml
   - ./falcondev-actions-cache.yaml
   - ./registry-cache.yaml
+  - ./hf-cache.yaml
