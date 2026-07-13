@@ -15,8 +15,8 @@ spec:
         containers:
           main:
             image:
-              repository: xiahan2019/olah
-              tag: 0.4.3@sha256:cefa299e42a8094d13c479922f4fe5577469cfcfcb979995f1d49eef3f5cd547
+              repository: ghcr.io/bo0tzz/olah
+              tag: sha-b783d8e@sha256:59bed5cda875b07b42c9c9d15c7c9ffd5d2a3885b140cfdc2d12e5c840a718a9
             args:
               - --host=0.0.0.0
               - --mirror-netloc=hf-cache.actions-cache.svc.cluster.local:8090
