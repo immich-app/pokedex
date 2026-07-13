@@ -6,6 +6,7 @@ spec:
   inputs:
     - name: fhs-bicycle
       org: futo-org
+      gpu: ""
       minRunners: 0
       maxRunners: 8
       resources:
@@ -16,6 +17,7 @@ spec:
 
     - name: pokedex-general
       org: immich-app
+      gpu: ""
       minRunners: 0
       maxRunners: 16
       resources:
@@ -26,6 +28,7 @@ spec:
 
     - name: pokedex-medium
       org: immich-app
+      gpu: ""
       minRunners: 0
       maxRunners: 8
       resources:
@@ -36,6 +39,7 @@ spec:
 
     - name: pokedex-large
       org: immich-app
+      gpu: ""
       minRunners: 0
       maxRunners: 6
       resources:
@@ -46,6 +50,7 @@ spec:
 
     - name: pokedex-huge
       org: immich-app
+      gpu: ""
       minRunners: 0
       maxRunners: 2
       resources:
@@ -56,6 +61,7 @@ spec:
 
     - name: pokedex-giant
       org: immich-app
+      gpu: ""
       minRunners: 0
       maxRunners: 1
       resources:
@@ -68,89 +74,126 @@ spec:
         - secretRef:
             name: pokedex-giant-bucket
 
-  resources:
-    - apiVersion: helm.toolkit.fluxcd.io/v2
-      kind: HelmRelease
-      metadata:
-        name: actions-runner-<< inputs.name >>
-        namespace: actions-runners
+    - name: pokedex-dgpu-nvidia-ampere
+      org: immich-app
+      gpu: dgpu-nvidia-ampere
+      minRunners: 0
+      maxRunners: 1
+      resources:
+        limits:
+          cpu: "4"
+          memory: "8Gi"
+      envFrom: []
+
+  resourcesTemplate: |
+    ---
+    apiVersion: helm.toolkit.fluxcd.io/v2
+    kind: HelmRelease
+    metadata:
+      name: actions-runner-<< inputs.name >>
+      namespace: actions-runners
+    spec:
+      interval: 30m
+      chartRef:
+        kind: OCIRepository
+        name: gha-runner-scale-set
+      values:
+        runnerScaleSetName: << inputs.name >>
+        githubConfigUrl: https://github.com/<< inputs.org >>
+        minRunners: << inputs.minRunners | int >>
+        maxRunners: << inputs.maxRunners | int >>
+        githubConfigSecret: << inputs.org >>-runner-auth
+        template:
+          spec:
+            <<- if inputs.gpu >>
+            resourceClaims:
+              - name: gpu
+                resourceClaimTemplateName: << inputs.name >>-gpu
+            <<- end >>
+            initContainers:
+              - name: init-dind-externals
+                image: ghcr.io/immich-app/actions-runner:main
+                command: ["cp"]
+                args: ["-r", "-v", "/home/runner/externals/.", "/home/runner/tmpDir/"]
+                volumeMounts:
+                  - name: dind-externals
+                    mountPath: /home/runner/tmpDir
+            containers:
+              - name: runner
+                image: ghcr.io/immich-app/actions-runner:main
+                imagePullPolicy: Always
+                command: ["/home/runner/run.sh"]
+                envFrom: << inputs.envFrom | toYaml | nindent 18 >>
+                env:
+                  - name: DOCKER_HOST
+                    value: unix:///run/docker/docker.sock
+                  - name: RUNNER_WAIT_FOR_DOCKER_IN_SECONDS
+                    value: '120'
+                  - name: CUSTOM_ACTIONS_RESULTS_URL
+                    value: "http://actions-cache.actions-cache.svc.cluster.local:3000"
+                volumeMounts:
+                  - name: work
+                    mountPath: /home/runner/_work
+                  - name: dind-sock
+                    mountPath: /run/docker
+                    readOnly: true
+                <<- if inputs.gpu >>
+                resources:
+                  claims:
+                    - name: gpu
+                <<- end >>
+              - name: dind
+                image: docker:29.5.2-dind@sha256:6b9cd914eb9c6b342c040a49a27a5eb3804453bae6ecc90f7ff96133595a95e8
+                args:
+                  - dockerd
+                  - --host=unix:///run/docker/docker.sock
+                  - --group=$(DOCKER_GROUP_GID)
+                env:
+                  - name: DOCKER_GROUP_GID
+                    value: "123"
+                securityContext:
+                  privileged: true
+                volumeMounts:
+                  - name: work
+                    mountPath: /home/runner/_work
+                  - name: dind-sock
+                    mountPath: /run/docker
+                  - name: dind-externals
+                    mountPath: /home/runner/externals
+                  - name: varlibdocker
+                    mountPath: /var/lib/docker
+                  - name: daemon-json
+                    mountPath: /etc/docker/daemon.json
+                    readOnly: true
+                    subPath: daemon.json
+            resources: << inputs.resources | toYaml | nindent 14 >>
+            volumes:
+              - name: work
+                emptyDir: {}
+              - name: dind-sock
+                emptyDir: {}
+              - name: dind-externals
+                emptyDir: {}
+              - name: varlibdocker
+                emptyDir: {}
+              - name: daemon-json
+                configMap:
+                  name: docker-daemon-config
+        controllerServiceAccount:
+          namespace: actions-controller
+          name: actions-runner-controller-gha-rs-controller
+    <<- if inputs.gpu >>
+    ---
+    apiVersion: resource.k8s.io/v1
+    kind: ResourceClaimTemplate
+    metadata:
+      name: << inputs.name >>-gpu
+      namespace: actions-runners
+    spec:
       spec:
-        interval: 30m
-        chartRef:
-          kind: OCIRepository
-          name: gha-runner-scale-set
-        values:
-          runnerScaleSetName: << inputs.name >>
-          githubConfigUrl: https://github.com/<< inputs.org >>
-          minRunners: << inputs.minRunners | int >>
-          maxRunners: << inputs.maxRunners | int >>
-          githubConfigSecret: << inputs.org >>-runner-auth
-          template:
-            spec:
-              initContainers:
-                - name: init-dind-externals
-                  image: ghcr.io/immich-app/actions-runner:main
-                  command: ["cp"]
-                  args: ["-r", "-v", "/home/runner/externals/.", "/home/runner/tmpDir/"]
-                  volumeMounts:
-                    - name: dind-externals
-                      mountPath: /home/runner/tmpDir
-              containers:
-                - name: runner
-                  image: ghcr.io/immich-app/actions-runner:main
-                  imagePullPolicy: Always
-                  command: ["/home/runner/run.sh"]
-                  envFrom: << inputs.envFrom | toYaml | nindent 20 >>
-                  env:
-                    - name: DOCKER_HOST
-                      value: unix:///run/docker/docker.sock
-                    - name: RUNNER_WAIT_FOR_DOCKER_IN_SECONDS
-                      value: '120'
-                    - name: CUSTOM_ACTIONS_RESULTS_URL
-                      value: "http://actions-cache.actions-cache.svc.cluster.local:3000"
-                  volumeMounts:
-                    - name: work
-                      mountPath: /home/runner/_work
-                    - name: dind-sock
-                      mountPath: /run/docker
-                      readOnly: true
-                - name: dind
-                  image: docker:29.5.2-dind@sha256:6b9cd914eb9c6b342c040a49a27a5eb3804453bae6ecc90f7ff96133595a95e8
-                  args:
-                    - dockerd
-                    - --host=unix:///run/docker/docker.sock
-                    - --group=$(DOCKER_GROUP_GID)
-                  env:
-                    - name: DOCKER_GROUP_GID
-                      value: "123"
-                  securityContext:
-                    privileged: true
-                  volumeMounts:
-                    - name: work
-                      mountPath: /home/runner/_work
-                    - name: dind-sock
-                      mountPath: /run/docker
-                    - name: dind-externals
-                      mountPath: /home/runner/externals
-                    - name: varlibdocker
-                      mountPath: /var/lib/docker
-                    - name: daemon-json
-                      mountPath: /etc/docker/daemon.json
-                      readOnly: true
-                      subPath: daemon.json
-              resources: << inputs.resources | toYaml | nindent 10 >>
-              volumes:
-                - name: work
-                  emptyDir: {}
-                - name: dind-sock
-                  emptyDir: {}
-                - name: dind-externals
-                  emptyDir: {}
-                - name: varlibdocker
-                  emptyDir: {}
-                - name: daemon-json
-                  configMap:
-                    name: docker-daemon-config
-          controllerServiceAccount:
-            namespace: actions-controller
-            name: actions-runner-controller-gha-rs-controller
+        devices:
+          requests:
+            - name: gpu
+              exactly:
+                deviceClassName: << inputs.gpu >>
+    <<- end >>

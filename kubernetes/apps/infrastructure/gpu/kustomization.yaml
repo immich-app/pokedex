@@ -4,6 +4,7 @@ namespace: gpu
 
 resources:
   - namespace.yaml
+  - ./device-classes/ks.yaml
   - ./amd/ks.yaml
   - ./nvidia/ks.yaml
   - ./intel/ks.yaml
