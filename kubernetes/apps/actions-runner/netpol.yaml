@@ -43,6 +43,16 @@ spec:
     - to:
       - namespaceSelector:
           matchLabels:
+            kubernetes.io/metadata.name: actions-cache
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: hf-cache
+      ports:
+        - port: 8090
+          protocol: TCP
+    - to:
+      - namespaceSelector:
+          matchLabels:
             kubernetes.io/metadata.name: storage
         podSelector:
           matchLabels:
