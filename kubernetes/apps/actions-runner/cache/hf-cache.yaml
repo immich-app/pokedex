@@ -1,0 +1,36 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: hf-cache
+  namespace: actions-cache
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  values:
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: xiahan2019/olah
+              tag: 0.4.3@sha256:cefa299e42a8094d13c479922f4fe5577469cfcfcb979995f1d49eef3f5cd547
+            args:
+              - --host=0.0.0.0
+              - --mirror-netloc=hf-cache.actions-cache.svc.cluster.local:8090
+              - --mirror-lfs-netloc=hf-cache.actions-cache.svc.cluster.local:8090
+              - --repos-path=/data/repos
+              - --cache-size-limit=600GB
+    service:
+      main:
+        ports:
+          http:
+            port: 8090
+    persistence:
+      data:
+        enabled: true
+        storageClass: ceph-block
+        size: 640Gi
+        accessMode: ReadWriteOnce

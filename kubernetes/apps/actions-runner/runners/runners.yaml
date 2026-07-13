@@ -131,6 +131,10 @@ spec:
                     value: '120'
                   - name: CUSTOM_ACTIONS_RESULTS_URL
                     value: "http://actions-cache.actions-cache.svc.cluster.local:3000"
+                  - name: HF_ENDPOINT
+                    value: "http://hf-cache.actions-cache.svc.cluster.local:8090"
+                  - name: HF_HUB_DISABLE_XET
+                    value: "1"
                 volumeMounts:
                   - name: work
                     mountPath: /home/runner/_work
