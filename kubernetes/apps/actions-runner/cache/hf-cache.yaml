@@ -16,7 +16,7 @@ spec:
           main:
             image:
               repository: ghcr.io/bo0tzz/olah
-              tag: sha-b783d8e@sha256:59bed5cda875b07b42c9c9d15c7c9ffd5d2a3885b140cfdc2d12e5c840a718a9
+              tag: sha-71dc682@sha256:9292108b73453a043882ccae6c963c61976c032c2b3d5b9f72aac7570b5e9b51
             args:
               - --host=0.0.0.0
               - --mirror-netloc=hf-cache.actions-cache.svc.cluster.local:8090
