@@ -21,3 +21,19 @@ spec:
       - openid
       - profile
       - email
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: loopdedupe-search
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: loopdedupe-search
+  apiKeyAuth:
+    credentialRefs:
+      - name: loopdedupe-search-api-key
+    extractFrom:
+      - headers:
+          - x-api-key
