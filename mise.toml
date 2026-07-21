@@ -4,7 +4,7 @@ talhelper = "3.1.13"
 kubectl = "1.36.1"
 helmfile = "1.5.2"
 helm = "4.2.3"
-usage = "3.3.0"
+usage = "3.5.5"
 flux2 = "2.9.2"
 
 [tasks."talos:genconfig"]
