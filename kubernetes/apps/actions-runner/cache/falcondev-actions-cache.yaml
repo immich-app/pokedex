@@ -30,5 +30,5 @@ spec:
       data:
         enabled: true
         storageClass: ceph-block
-        size: 200Gi
+        size: 250Gi
         accessMode: ReadWriteOnce
