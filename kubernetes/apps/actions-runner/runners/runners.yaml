@@ -85,6 +85,28 @@ spec:
           memory: "8Gi"
       envFrom: []
 
+    - name: pokedex-dgpu-nvidia-pascal
+      org: immich-app
+      gpu: dgpu-nvidia-pascal
+      minRunners: 0
+      maxRunners: 1
+      resources:
+        limits:
+          cpu: "4"
+          memory: "8Gi"
+      envFrom: []
+
+    - name: pokedex-igpu-intel-jasperlake
+      org: immich-app
+      gpu: igpu-intel-jasperlake
+      minRunners: 0
+      maxRunners: 1
+      resources:
+        limits:
+          cpu: "2"
+          memory: "4Gi"
+      envFrom: []
+
   resourcesTemplate: |
     ---
     apiVersion: helm.toolkit.fluxcd.io/v2
