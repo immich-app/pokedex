@@ -12,6 +12,8 @@ spec:
     kubeletPlugin:
       nodeSelector:
         feature.node.kubernetes.io/pci-0300_8086.present: "true"
+      healthMonitoring:
+        enabled: false
     # Talos /etc is read-only; use /run/cdi (writable, and the only dir containerd
     # scans by default) so no containerd cdi_spec_dirs patch is needed.
     cdi:
