@@ -7,3 +7,12 @@ spec:
   selectors:
     - cel:
         expression: device.driver == 'gpu.nvidia.com' && device.attributes['gpu.nvidia.com'].architecture == 'Ampere'
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: dgpu-nvidia-pascal
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.nvidia.com' && device.attributes['gpu.nvidia.com'].architecture == 'Pascal'
