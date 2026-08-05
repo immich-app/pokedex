@@ -5,7 +5,7 @@ kubectl = "1.36.1"
 helmfile = "1.7.0"
 helm = "4.2.3"
 usage = "3.5.5"
-flux2 = "2.9.2"
+flux2 = "2.9.3"
 
 [tasks."talos:genconfig"]
 dir = "talos"
