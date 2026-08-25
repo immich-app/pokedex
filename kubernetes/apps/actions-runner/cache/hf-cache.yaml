@@ -15,8 +15,8 @@ spec:
         containers:
           main:
             image:
-              repository: ghcr.io/bo0tzz/olah
-              tag: sha-71dc682@sha256:9292108b73453a043882ccae6c963c61976c032c2b3d5b9f72aac7570b5e9b51
+              repository: docker.io/xiahan2019/olah
+              tag: 0.5.1@sha256:a5fec886e874ca978a8b011a231337a3d7c8da9ae8a6c283ba2030bf5d259a6b
             args:
               - --host=0.0.0.0
               - --mirror-netloc=hf-cache.actions-cache.svc.cluster.local:8090
@@ -34,3 +34,5 @@ spec:
         storageClass: ceph-block
         size: 640Gi
         accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /data/repos
