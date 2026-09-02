@@ -84,11 +84,6 @@
       "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["major"],
       "groupName": null
-    },
-    {
-      "description": "Flux OCIRepository tag is a single field — appending @sha256 makes the registry 404",
-      "matchFileNames": ["**/*ocirepository.yaml"],
-      "pinDigests": false,
     }
   ],
   "flux": {
