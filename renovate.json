@@ -60,6 +60,7 @@
         "commitMessageTopic": "{{{groupName}}} group",
       },
       "minimumGroupSize": 2,
+      "separateMultipleMinor": true,
     },
     {
       "description": "Override Helmfile Dependency Name",
