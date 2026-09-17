@@ -22,6 +22,20 @@ rollOutCiliumPods: true
 operator:
   replicas: 2
   rollOutPods: true
+  prometheus:
+    enabled: true
+
+prometheus:
+  enabled: true
+
+hubble:
+  metrics:
+    enabled:
+      - dns
+      - drop
+      - tcp
+      - flow
+      - icmp
 
 securityContext:
   capabilities:
