@@ -1,0 +1,296 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: vmagent
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: victoria-metrics-k8s-stack
+  interval: 1h
+  values:
+    fullnameOverride: pokedex
+
+    global:
+      clusterLabel: cluster
+
+    defaultRules:
+      enabled: false
+
+    vmcluster:
+      enabled: false
+    vmsingle:
+      enabled: false
+    vmalert:
+      enabled: false
+    alertmanager:
+      enabled: false
+    vmauth:
+      enabled: false
+    grafana:
+      enabled: false
+    defaultDashboards:
+      enabled: false
+
+    prometheus-node-exporter:
+      enabled: true
+
+    kube-state-metrics:
+      enabled: true
+      # gotk_resource_info for the fleet Flux dashboard (fluxcd/flux2-monitoring-example).
+      rbac:
+        extraRules:
+          - apiGroups:
+              - source.toolkit.fluxcd.io
+              - kustomize.toolkit.fluxcd.io
+              - helm.toolkit.fluxcd.io
+              - notification.toolkit.fluxcd.io
+              - image.toolkit.fluxcd.io
+            resources:
+              - gitrepositories
+              - buckets
+              - helmrepositories
+              - helmcharts
+              - ocirepositories
+              - kustomizations
+              - helmreleases
+              - alerts
+              - providers
+              - receivers
+              - imagerepositories
+              - imagepolicies
+              - imageupdateautomations
+            verbs: ["list", "watch"]
+      customResourceState:
+        enabled: true
+        config:
+          spec:
+            resources:
+              - groupVersionKind:
+                  group: kustomize.toolkit.fluxcd.io
+                  version: v1
+                  kind: Kustomization
+                metricNamePrefix: gotk
+                metrics:
+                  - name: "resource_info"
+                    help: "The current state of a Flux Kustomization resource."
+                    each:
+                      type: Info
+                      info:
+                        labelsFromPath:
+                          name: [metadata, name]
+                    labelsFromPath:
+                      exported_namespace: [metadata, namespace]
+                      ready: [status, conditions, "[type=Ready]", status]
+                      suspended: [spec, suspend]
+                      revision: [status, lastAppliedRevision]
+                      source_name: [spec, sourceRef, name]
+              - groupVersionKind:
+                  group: helm.toolkit.fluxcd.io
+                  version: v2
+                  kind: HelmRelease
+                metricNamePrefix: gotk
+                metrics:
+                  - name: "resource_info"
+                    help: "The current state of a Flux HelmRelease resource."
+                    each:
+                      type: Info
+                      info:
+                        labelsFromPath:
+                          name: [metadata, name]
+                    labelsFromPath:
+                      exported_namespace: [metadata, namespace]
+                      ready: [status, conditions, "[type=Ready]", status]
+                      suspended: [spec, suspend]
+                      revision: [status, history, "0", chartVersion]
+                      chart_name: [status, history, "0", chartName]
+                      chart_app_version: [status, history, "0", appVersion]
+                      chart_ref_name: [spec, chartRef, name]
+                      chart_source_name: [spec, chart, spec, sourceRef, name]
+              - groupVersionKind:
+                  group: source.toolkit.fluxcd.io
+                  version: v1
+                  kind: GitRepository
+                metricNamePrefix: gotk
+                metrics:
+                  - name: "resource_info"
+                    help: "The current state of a Flux GitRepository resource."
+                    each:
+                      type: Info
+                      info:
+                        labelsFromPath:
+                          name: [metadata, name]
+                    labelsFromPath:
+                      exported_namespace: [metadata, namespace]
+                      ready: [status, conditions, "[type=Ready]", status]
+                      suspended: [spec, suspend]
+                      revision: [status, artifact, revision]
+                      url: [spec, url]
+              - groupVersionKind:
+                  group: source.toolkit.fluxcd.io
+                  version: v1
+                  kind: OCIRepository
+                metricNamePrefix: gotk
+                metrics:
+                  - name: "resource_info"
+                    help: "The current state of a Flux OCIRepository resource."
+                    each:
+                      type: Info
+                      info:
+                        labelsFromPath:
+                          name: [metadata, name]
+                    labelsFromPath:
+                      exported_namespace: [metadata, namespace]
+                      ready: [status, conditions, "[type=Ready]", status]
+                      suspended: [spec, suspend]
+                      revision: [status, artifact, revision]
+                      url: [spec, url]
+              - groupVersionKind:
+                  group: source.toolkit.fluxcd.io
+                  version: v1
+                  kind: HelmRepository
+                metricNamePrefix: gotk
+                metrics:
+                  - name: "resource_info"
+                    help: "The current state of a Flux HelmRepository resource."
+                    each:
+                      type: Info
+                      info:
+                        labelsFromPath:
+                          name: [metadata, name]
+                    labelsFromPath:
+                      exported_namespace: [metadata, namespace]
+                      ready: [status, conditions, "[type=Ready]", status]
+                      suspended: [spec, suspend]
+                      revision: [status, artifact, revision]
+                      url: [spec, url]
+              - groupVersionKind:
+                  group: source.toolkit.fluxcd.io
+                  version: v1
+                  kind: HelmChart
+                metricNamePrefix: gotk
+                metrics:
+                  - name: "resource_info"
+                    help: "The current state of a Flux HelmChart resource."
+                    each:
+                      type: Info
+                      info:
+                        labelsFromPath:
+                          name: [metadata, name]
+                    labelsFromPath:
+                      exported_namespace: [metadata, namespace]
+                      ready: [status, conditions, "[type=Ready]", status]
+                      suspended: [spec, suspend]
+                      revision: [status, artifact, revision]
+                      chart_name: [spec, chart]
+                      chart_version: [spec, version]
+
+    # Talos labels its static control-plane pods k8s-app, not component; the
+    # chart's default key must be nulled or the merged selector matches nothing.
+    kubeControllerManager:
+      service:
+        selector:
+          component: null
+          k8s-app: kube-controller-manager
+      vmScrape:
+        spec:
+          jobLabel: app.kubernetes.io/component
+          endpoints:
+            - port: http-metrics
+              scheme: https
+              bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+              tlsConfig:
+                insecureSkipVerify: true
+    kubeScheduler:
+      service:
+        selector:
+          component: null
+          k8s-app: kube-scheduler
+      vmScrape:
+        spec:
+          jobLabel: app.kubernetes.io/component
+          endpoints:
+            - port: http-metrics
+              scheme: https
+              bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+              tlsConfig:
+                insecureSkipVerify: true
+    # Talos etcd is a host service; listen-metrics-urls is opened in talconfig.yaml.
+    kubeEtcd:
+      endpoints:
+        - 10.10.10.11
+        - 10.10.10.12
+        - 10.10.10.13
+      service:
+        port: 2381
+        targetPort: 2381
+      vmScrape:
+        spec:
+          jobLabel: app.kubernetes.io/component
+          endpoints:
+            - port: http-metrics
+              scheme: http
+    kubeApiServer:
+      vmScrape:
+        spec:
+          jobLabel: component
+          namespaceSelector:
+            matchNames:
+              - default
+          selector:
+            matchLabels:
+              component: apiserver
+              provider: kubernetes
+          endpoints:
+            - port: https
+              scheme: https
+              bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+              tlsConfig:
+                caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                serverName: kubernetes
+              # Histogram buckets dominate the apiserver's exposition; sums/counts survive.
+              metricRelabelConfigs:
+                - action: drop
+                  source_labels: [__name__]
+                  regex: (apiserver_request_duration_seconds_bucket|apiserver_request_body_size_bytes_bucket|apiserver_response_sizes_bucket|apiserver_request_sli_duration_seconds_bucket|apiserver_watch_events_sizes_bucket|etcd_request_duration_seconds_bucket)
+    kubeProxy:
+      enabled: false
+
+    vmagent:
+      spec:
+        externalLabels:
+          project: immich
+          env: prod
+          cluster: pokedex
+          provider: int
+          region: aus
+        # Under honor_labels a scraped `cluster` beats externalLabels, so set it
+        # last unconditionally; the fleet keeps the Postgres one as pg_cluster.
+        inlineRelabelConfig:
+          - if: '{__name__=~"cnpg_.*", exported_cluster!=""}'
+            sourceLabels: [exported_cluster]
+            targetLabel: pg_cluster
+          - if: '{__name__=~"cnpg_.*"}'
+            action: labeldrop
+            regex: exported_cluster
+          - targetLabel: cluster
+            replacement: pokedex
+        statefulMode: true
+        statefulStorage:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: ceph-block
+              resources:
+                requests:
+                  storage: 10Gi
+        remoteWrite:
+          - url: https://vmauth.futostatus.com/insert/0/prometheus/api/v1/write
+            bearerTokenSecret:
+              name: vmagent-remote-write
+              key: token
+            streamAggrConfig:
+              dedupInterval: 20s
+        extraArgs:
+          promscrape.streamParse: "true"
+          promscrape.dropOriginalLabels: "true"
+          promscrape.maxScrapeSize: 50MiB
