@@ -1,0 +1,45 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: victoria-logs-collector
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: victoria-logs-collector
+  interval: 1h
+  values:
+    fullnameOverride: victoria-logs-collector
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 2Gi
+
+    remoteWrite:
+      - url: https://vmauth.futostatus.com/insert/native
+        maxDiskUsagePerURL: 10GB
+    extraArgs:
+      remoteWrite.bearerTokenFile: /secrets/token
+      kubernetesCollector.decolorizeFields: _msg
+    extraVolumes:
+      - name: token
+        secret:
+          secretName: vmagent-remote-write
+          items:
+            - key: token
+              path: token
+    extraVolumeMounts:
+      - name: token
+        mountPath: /secrets
+        readOnly: true
+
+    collector:
+      extraFields: '{"project":"immich","env":"prod","cluster":"pokedex","provider":"int","region":"aus"}'
+      streamFields:
+        - kubernetes.pod_name
+        - kubernetes.pod_namespace
+        - kubernetes.container_name
+        - kubernetes.pod_labels.app.kubernetes.io/name

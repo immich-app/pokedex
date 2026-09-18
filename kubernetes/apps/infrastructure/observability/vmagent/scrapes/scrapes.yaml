@@ -207,3 +207,16 @@ spec:
       app.kubernetes.io/name: tuppr
   endpoints:
     - port: metrics
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMPodScrape
+metadata:
+  name: victoria-logs-collector
+spec:
+  namespaceSelector:
+    matchNames: [observability]
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: victoria-logs-collector
+  podMetricsEndpoints:
+    - port: http
