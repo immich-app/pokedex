@@ -169,7 +169,7 @@ spec:
                     - name: gpu
                 <<- end >>
               - name: dind
-                image: docker:29.6.1-dind@sha256:66d292e5c26bd33a6f6f61cacb880de2186339a524ecba1ce098dbbaceed6515
+                image: docker:29.8.0-dind@sha256:5efed980cba3fc126cf54e21a5a6ff8849d05b6e0623d6e7612f48e9cd6cd17e
                 args:
                   - dockerd
                   - --host=unix:///run/docker/docker.sock
