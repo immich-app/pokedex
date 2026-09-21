@@ -1,0 +1,47 @@
+---
+machine:
+  type: controlplane
+  install:
+    diskSelector:
+      size: '>= 1TB'
+      wwid: naa.500a075121a495a7
+    image: factory.talos.dev/metal-installer/884b246faeea1766b7285617d36bf27f744649827980326442942e8b342e8bda:v1.13.10
+  kernel:
+    modules:
+      - name: nvidia
+      - name: nvidia_uvm
+      - name: nvidia_drm
+      - name: nvidia_modeset
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: 'off'
+hostname: surge
+---
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: ethSel0
+selector:
+  match: glob("d0:50:99:c3:36:4b", mac(link.permanent_addr))
+---
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: bond0-m0
+selector:
+  match: glob("1c:34:da:0c:d2:b1", mac(link.permanent_addr))
+---
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: bond0-m1
+selector:
+  match: glob("1c:34:da:0c:d2:b0", mac(link.permanent_addr))
+---
+apiVersion: v1alpha1
+kind: BondConfig
+name: bond0
+links:
+  - bond0-m0
+  - bond0-m1
+bondMode: active-backup
+addresses:
+  - address: 10.10.10.12/24

@@ -1,0 +1,46 @@
+---
+machine:
+  type: controlplane
+  install:
+    diskSelector:
+      size: '>= 1TB'
+    image: factory.talos.dev/metal-installer/2acc856e018def9e619ec24e8947597803bbff84f9a2c68f03bbe5258f1f0b70:v1.13.10
+  kernel:
+    modules:
+      - name: nvidia
+      - name: nvidia_uvm
+      - name: nvidia_drm
+      - name: nvidia_modeset
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: 'off'
+hostname: brock
+---
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: ethSel0
+selector:
+  match: glob("d0:50:99:c3:36:35", mac(link.permanent_addr))
+---
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: bond0-m0
+selector:
+  match: glob("08:c0:eb:0a:14:91", mac(link.permanent_addr))
+---
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: bond0-m1
+selector:
+  match: glob("08:c0:eb:0a:14:90", mac(link.permanent_addr))
+---
+apiVersion: v1alpha1
+kind: BondConfig
+name: bond0
+links:
+  - bond0-m0
+  - bond0-m1
+bondMode: active-backup
+addresses:
+  - address: 10.10.10.11/24

@@ -1,0 +1,36 @@
+---
+machine:
+  type: controlplane
+  install:
+    diskSelector:
+      size: '>= 1TB'
+      wwid: naa.500117310012436c
+    image: factory.talos.dev/metal-installer/2d61dd07b20062062ea671b4d01873506103b67c0f7a4c3fb6cf4ee85585dcb8:v1.13.10
+    grubUseUKICmdline: false
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: 'off'
+hostname: misty
+---
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: bond0-m0
+selector:
+  match: glob("e4:43:4b:18:3a:00", mac(link.permanent_addr))
+---
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: bond0-m1
+selector:
+  match: glob("e4:43:4b:18:3a:02", mac(link.permanent_addr))
+---
+apiVersion: v1alpha1
+kind: BondConfig
+name: bond0
+links:
+  - bond0-m0
+  - bond0-m1
+bondMode: active-backup
+addresses:
+  - address: 10.10.10.13/24
