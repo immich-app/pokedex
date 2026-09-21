@@ -1,7 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "local>immich-app/.github:renovate-config"
+    "local>immich-app/.github:renovate-config",
+    "github>home-operations/renovate-presets//apps/talosFactory.json5"
   ],
   "baseBranchPatterns": ["development"],
   "automerge": false,
