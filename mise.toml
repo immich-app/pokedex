@@ -1,29 +1,72 @@
 [tools]
 talosctl = "1.13.10"
-talhelper = "3.1.17"
+yq = "4.53.6"
 kubectl = "1.36.1"
 helmfile = "1.7.4"
 helm = "4.2.4"
 usage = "6.9.1"
 flux2 = "2.9.2"
 
-[tasks."talos:genconfig"]
+[env]
+TALOSCONFIG = "{{ config_root }}/talos/clusterconfig/talosconfig"
+
+[tasks."talos:render"]
+description = "Render the full machine config for a node to stdout"
 dir = "talos"
-run = "talhelper genconfig --secret-file <(op inject -i talsecret.yaml)"
-outputs = ["talos/clusterconfig"]
+usage = 'arg "<node>"'
+shell = "bash -c"
+run = """
+node="$usage_node"
+if [ "$(yq eval 'select(di == 0) | .machine.type' nodes/$node.yaml)" = controlplane ]; then
+  talosctl machineconfig patch cluster.yaml -p @controlplane.yaml \
+    -p @<(op read "op://Pokedex/talsecret.yaml/talsecret.yaml" | yq --from-file secrets.yq) \
+    -p @nodes/$node.yaml
+else
+  talosctl machineconfig patch cluster.yaml \
+    -p @<(op read "op://Pokedex/talsecret.yaml/talsecret.yaml" | yq --from-file secrets-worker.yq) \
+    -p @nodes/$node.yaml
+fi
+"""
+
+[tasks."talos:apply-node"]
+description = "Apply the machine config to one node; extra args go to talosctl apply-config (e.g. --dry-run)"
+dir = "talos"
+usage = '''
+arg "<node>"
+arg "[args]..." var=#true
+'''
+shell = "bash -c"
+run = """
+ip=$(kubectl get node "$usage_node" -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}' 2>/dev/null)
+if [ -z "$ip" ]; then echo "  $usage_node is not in the cluster, skipping"; exit 0; fi
+mise run talos:render "$usage_node" | talosctl -n "$ip" apply-config -f /dev/stdin $usage_args
+"""
 
 [tasks."talos:apply"]
+description = "Apply the machine config to every node; extra args go to talosctl apply-config"
 dir = "talos"
-depends = ["talos:genconfig"]
-confirm = "Are you sure you want to apply the talos config to all nodes?"
-run = "talhelper gencommand apply | bash"
+usage = 'arg "[args]..." var=#true'
+confirm = "Apply the machine config to all nodes?"
+shell = "bash -c"
+run = """
+for f in nodes/*.yaml; do
+  node=$(basename "$f" .yaml)
+  echo "=== $node ==="
+  mise run talos:apply-node "$node" $usage_args || echo "  !! $node failed"
+done
+"""
+
+[tasks."talos:schematic"]
+description = "Print the Image Factory schematic ID for every node's schematics/<node>.yaml"
+dir = "talos"
+run = "for f in schematics/*.yaml; do echo \"$(basename $f .yaml): $(curl -sfX POST --data-binary @$f https://factory.talos.dev/schematics | yq -r .id)\"; done"
 
 [tasks."talos:bootstrap-k8s"]
-dir = "talos"
-depends = ["talos:genconfig"]
+description = "Bootstrap Cilium + Flux onto a fresh cluster via helmfile"
+shell = "bash -c"
 run = """
 KUBECONFIG=$(mktemp)
 trap 'rm -f "$KUBECONFIG"' EXIT
-talhelper gencommand kubeconfig --extra-flags - | bash > "$KUBECONFIG"
+talosctl kubeconfig -n "$(talosctl config info -o yaml | yq -r '.endpoints[0]')" "$KUBECONFIG"
 helmfile --kubeconfig "$KUBECONFIG" --file '{{ config_root }}/bootstrap/helmfile.yaml' sync
 """

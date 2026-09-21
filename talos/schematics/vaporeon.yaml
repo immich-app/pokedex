@@ -1,0 +1,12 @@
+---
+customization:
+  # kexec reboots hang this box (Lenovo M75q-1); disabling kexec makes
+  # reboots (incl. tuppr's) fall back to a firmware reboot, which works.
+  # The arg is baked into the UKI here; grubUseUKICmdline (cluster.yaml) makes
+  # the installer use the UKI's cmdline instead of recomputing it on the host.
+  extraKernelArgs:
+    - sysctl.kernel.kexec_load_disabled=1
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/amd-ucode
+      - siderolabs/amdgpu
