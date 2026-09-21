@@ -5,7 +5,7 @@ machine:
     diskSelector:
       size: '>= 1TB'
       wwid: naa.500a075121a495a7
-    image: factory.talos.dev/metal-installer/884b246faeea1766b7285617d36bf27f744649827980326442942e8b342e8bda:v1.13.10
+    image: factory.talos.dev/metal-installer/884b246faeea1766b7285617d36bf27f744649827980326442942e8b342e8bda:v1.14.1
   kernel:
     modules:
       - name: nvidia

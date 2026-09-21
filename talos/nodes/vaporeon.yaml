@@ -4,7 +4,7 @@ machine:
   install:
     diskSelector:
       type: nvme
-    image: factory.talos.dev/metal-installer/a512a88c30194cea1db40df34625f803f66313f372a54b4dbc8c252a4c188976:v1.13.10
+    image: factory.talos.dev/metal-installer/a512a88c30194cea1db40df34625f803f66313f372a54b4dbc8c252a4c188976:v1.14.1
 ---
 apiVersion: v1alpha1
 kind: HostnameConfig
