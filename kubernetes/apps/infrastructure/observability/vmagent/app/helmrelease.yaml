@@ -256,6 +256,22 @@ spec:
     kubeProxy:
       enabled: false
 
+    # NFD publishes 50-80 feature.node.kubernetes.io labels per node and the
+    # chart's kubelet labelmap copies all of them onto every series, which o11y
+    # rejects at -maxLabelsPerTimeseries=40. Chart default list plus the drop.
+    kubelet:
+      vmScrape:
+        spec:
+          relabelConfigs:
+            - action: labelmap
+              regex: __meta_kubernetes_node_label_(.+)
+            - action: labeldrop
+              regex: feature_node_kubernetes_io_.+
+            - sourceLabels: [__metrics_path__]
+              targetLabel: metrics_path
+            - targetLabel: job
+              replacement: kubelet
+
     vmagent:
       spec:
         externalLabels:
