@@ -297,13 +297,15 @@ spec:
           - targetLabel: cluster
             replacement: pokedex
         # The operator's default 200m CPU limit throttled the agent ~97% of
-        # the time and stretched the 20s scrape cycle to ~40s. Setting a CPU
-        # request suppresses that default; no CPU limit on purpose.
+        # the time and stretched the 20s scrape cycle to ~40s. Keep a CPU
+        # limit: without one vmagent sizes its scrape and remote-write
+        # concurrency from the node's cores and OOMs the 1Gi limit at startup.
         resources:
           requests:
             cpu: 250m
             memory: 512Mi
           limits:
+            cpu: "1"
             memory: 1Gi
         statefulMode: true
         statefulStorage:
