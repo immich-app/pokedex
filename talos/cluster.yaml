@@ -3,10 +3,6 @@ version: v1alpha1
 debug: false
 persist: true
 machine:
-  kubelet:
-    image: ghcr.io/siderolabs/kubelet:v1.36.1
-    defaultRuntimeSeccompProfileEnabled: true
-    disableManifestsDirectory: true
   install:
     wipe: false
     grubUseUKICmdline: true
@@ -36,3 +32,8 @@ cluster:
       kubernetes:
         disabled: true
       service: {}
+---
+apiVersion: v1alpha1
+kind: KubeletConfig
+image: ghcr.io/siderolabs/kubelet:v1.37.0
+defaultRuntimeSeccompProfileEnabled: true
