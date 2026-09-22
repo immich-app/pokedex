@@ -9,9 +9,6 @@ spec:
     name: rook-ceph
   interval: 1h
   values:
-    csi:
-      cephFSKernelMountOptions: ms_mode=prefer-crc
-      enableLiveness: true
     image:
       repository: ghcr.io/rook/ceph
     resources:
