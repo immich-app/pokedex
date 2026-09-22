@@ -26,12 +26,11 @@ cluster:
       - 10.244.0.0/16
     serviceSubnets:
       - 10.96.0.0/12
-  discovery:
-    enabled: true
-    registries:
-      kubernetes:
-        disabled: true
-      service: {}
+---
+apiVersion: v1alpha1
+kind: DiscoveryServiceConfig
+name: default
+endpoint: https://discovery.talos.dev/
 ---
 apiVersion: v1alpha1
 kind: KubeletConfig
