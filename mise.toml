@@ -1,7 +1,7 @@
 [tools]
 talosctl = "1.14.1"
 yq = "4.53.6"
-kubectl = "1.36.1"
+kubectl = "1.37.0"
 helmfile = "1.8.0"
 helm = "4.2.4"
 usage = "6.9.1"
