@@ -38,6 +38,8 @@ arg "[args]..." var=#true
 shell = "bash -c"
 run = """
 ip=$(kubectl get node "$usage_node" -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}' 2>/dev/null)
+# kube API down: fall back to Talos discovery
+[ -n "$ip" ] || ip=$(talosctl get members "$usage_node" -o jsonpath='{.spec.addresses[0]}' 2>/dev/null | grep -m1 .)
 if [ -z "$ip" ]; then echo "  $usage_node is not in the cluster, skipping"; exit 0; fi
 mise run talos:render "$usage_node" | talosctl -n "$ip" apply-config -f /dev/stdin $usage_args
 """
