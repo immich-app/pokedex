@@ -11,10 +11,11 @@ spec:
   values:
     # Patched fork: GetDriverVersion reads only the amdgpu module version (not all DRM
     # cards), so it no longer picks up a co-located nvidia GPU's version and fails semver
-    # on mixed nodes (brock). Drop once the fix is upstream.
+    # on mixed nodes (brock). Drop once the fix is upstream:
+    # https://github.com/ROCm/k8s-gpu-dra-driver/issues/56
     image:
       repository: ghcr.io/bo0tzz/k8s-gpu-dra-driver
-      tag: d733286
+      tag: b057785
     cdi:
       dynamicPath: /run/cdi
     kubeletPlugin:
