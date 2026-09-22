@@ -8,9 +8,6 @@ machine:
     grubUseUKICmdline: true
   features:
     diskQuotaSupport: true
-    kubePrism:
-      enabled: true
-      port: 7445
     hostDNS:
       enabled: true
       forwardKubeDNSToHost: true
@@ -31,6 +28,10 @@ apiVersion: v1alpha1
 kind: DiscoveryServiceConfig
 name: default
 endpoint: https://discovery.talos.dev/
+---
+apiVersion: v1alpha1
+kind: KubePrismConfig
+port: 7445
 ---
 apiVersion: v1alpha1
 kind: KubeletConfig
