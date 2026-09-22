@@ -283,6 +283,11 @@ spec:
         # Under honor_labels a scraped `cluster` beats externalLabels, so set it
         # last unconditionally; the fleet keeps the Postgres one as pg_cluster.
         inlineRelabelConfig:
+          # Rook's ServiceMonitors set honor_labels with cluster=<namespace>;
+          # keep that under ceph_cluster like azad before the override below.
+          - if: '{job=~"rook-ceph-(mgr|exporter)"}'
+            sourceLabels: [cluster]
+            targetLabel: ceph_cluster
           - if: '{__name__=~"cnpg_.*", exported_cluster!=""}'
             sourceLabels: [exported_cluster]
             targetLabel: pg_cluster
@@ -291,6 +296,15 @@ spec:
             regex: exported_cluster
           - targetLabel: cluster
             replacement: pokedex
+        # The operator's default 200m CPU limit throttled the agent ~97% of
+        # the time and stretched the 20s scrape cycle to ~40s. Setting a CPU
+        # request suppresses that default; no CPU limit on purpose.
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            memory: 1Gi
         statefulMode: true
         statefulStorage:
           volumeClaimTemplate:
