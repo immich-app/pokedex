@@ -6,17 +6,17 @@ machine:
         routes:
           - network: 0.0.0.0/0
             gateway: 10.10.10.1
-  features:
-    kubernetesTalosAPIAccess:
-      enabled: true
-      allowedRoles:
-        - os:admin
-      allowedKubernetesNamespaces:
-        - system-upgrade
 cluster:
   etcd:
     extraArgs:
       listen-metrics-urls: http://0.0.0.0:2381
+---
+apiVersion: v1alpha1
+kind: KubeTalosAPIAccessConfig
+allowedRoles:
+  - os:admin
+allowedKubernetesNamespaces:
+  - system-upgrade
 ---
 apiVersion: v1alpha1
 kind: KubeNodeConfig
