@@ -13,13 +13,16 @@ machine:
         - os:admin
       allowedKubernetesNamespaces:
         - system-upgrade
-  nodeLabels:
-    node.kubernetes.io/exclude-from-external-load-balancers: ""
 cluster:
   etcd:
     extraArgs:
       listen-metrics-urls: http://0.0.0.0:2381
-  allowSchedulingOnControlPlanes: true
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+labels:
+  node-role.kubernetes.io/control-plane: ""
+  node.kubernetes.io/exclude-from-external-load-balancers: ""
 ---
 apiVersion: v1alpha1
 kind: KubeAPIServerConfig
