@@ -5,6 +5,11 @@ cluster:
       listen-metrics-urls: http://0.0.0.0:2381
 ---
 apiVersion: v1alpha1
+kind: KubeServiceAccountConfig
+issuer:
+  issuerURL: https://kube.pokedex.internal.immich.cloud:6443
+---
+apiVersion: v1alpha1
 kind: KubeTalosAPIAccessConfig
 allowedRoles:
   - os:admin
