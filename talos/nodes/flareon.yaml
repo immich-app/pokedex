@@ -1,10 +1,15 @@
 ---
 machine:
   type: worker
-  install:
-    diskSelector:
-      type: ssd
-    image: factory.talos.dev/metal-installer/759b2b21175fec663f0a9559999d094ba661fe0687e45aac674c944a871ac652:v1.14.1
+---
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+installer:
+  image: factory.talos.dev/metal-installer/759b2b21175fec663f0a9559999d094ba661fe0687e45aac674c944a871ac652:v1.14.1
+provisioning:
+  diskSelector:
+    match: '!disk.rotational && disk.transport != "" && !disk.readonly && !disk.cdrom'
+  wipe: false
 ---
 apiVersion: v1alpha1
 kind: HostnameConfig

@@ -3,9 +3,6 @@ version: v1alpha1
 debug: false
 persist: true
 machine:
-  install:
-    wipe: false
-    grubUseUKICmdline: true
   features:
     diskQuotaSupport: true
 cluster:
