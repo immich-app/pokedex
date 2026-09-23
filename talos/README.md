@@ -20,7 +20,7 @@ machine-config patch. `machine.ca` and `cluster.ca` merge as a cert-plus-key uni
 `machine.type` lives in each `nodes/<node>.yaml` and selects which layers apply:
 `controlplane` pulls in `controlplane.yaml` + the full secret bundle, anything else
 gets the worker subset. Control planes are static (bond0 + address); workers are DHCP
-(hostname only). misty pins `install.grubUseUKICmdline: false` because it boots GRUB.
+(hostname only).
 
 ## Tasks (mise)
 

@@ -1,12 +1,15 @@
 ---
 machine:
   type: controlplane
-  install:
-    diskSelector:
-      size: '>= 1TB'
-      wwid: naa.500117310012436c
-    image: factory.talos.dev/metal-installer/2d61dd07b20062062ea671b4d01873506103b67c0f7a4c3fb6cf4ee85585dcb8:v1.14.1
-    grubUseUKICmdline: false
+---
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+installer:
+  image: factory.talos.dev/metal-installer/2d61dd07b20062062ea671b4d01873506103b67c0f7a4c3fb6cf4ee85585dcb8:v1.14.1
+provisioning:
+  diskSelector:
+    match: 'disk.wwid == "naa.500117310012436c"'
+  wipe: false
 ---
 apiVersion: v1alpha1
 kind: HostnameConfig

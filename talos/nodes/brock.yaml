@@ -1,16 +1,21 @@
 ---
 machine:
   type: controlplane
-  install:
-    diskSelector:
-      size: '>= 1TB'
-    image: factory.talos.dev/metal-installer/2acc856e018def9e619ec24e8947597803bbff84f9a2c68f03bbe5258f1f0b70:v1.14.1
   kernel:
     modules:
       - name: nvidia
       - name: nvidia_uvm
       - name: nvidia_drm
       - name: nvidia_modeset
+---
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+installer:
+  image: factory.talos.dev/metal-installer/2acc856e018def9e619ec24e8947597803bbff84f9a2c68f03bbe5258f1f0b70:v1.14.1
+provisioning:
+  diskSelector:
+    match: 'disk.wwid == "naa.500a07511b44e04c"'
+  wipe: false
 ---
 apiVersion: v1alpha1
 kind: HostnameConfig
