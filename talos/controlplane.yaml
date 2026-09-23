@@ -1,11 +1,4 @@
 ---
-machine:
-  network:
-    interfaces:
-      - interface: bond0
-        routes:
-          - network: 0.0.0.0/0
-            gateway: 10.10.10.1
 cluster:
   etcd:
     extraArgs:
