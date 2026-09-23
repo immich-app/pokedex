@@ -37,3 +37,5 @@ links:
 bondMode: active-backup
 addresses:
   - address: 10.10.10.13/24
+routes:
+  - gateway: 10.10.10.1
