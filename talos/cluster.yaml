@@ -5,18 +5,19 @@ persist: true
 machine:
   features:
     diskQuotaSupport: true
-cluster:
-  controlPlane:
-    endpoint: https://kube.pokedex.internal.immich.cloud:6443
-  clusterName: pokedex
-  network:
-    cni:
-      name: none
-    dnsDomain: cluster.local
-    podSubnets:
-      - 10.244.0.0/16
-    serviceSubnets:
-      - 10.96.0.0/12
+---
+apiVersion: v1alpha1
+kind: KubeClusterConfig
+clusterName: pokedex
+endpoint: https://kube.pokedex.internal.immich.cloud:6443
+---
+apiVersion: v1alpha1
+kind: KubeNetworkConfig
+dnsDomain: cluster.local
+podSubnets:
+  - 10.244.0.0/16
+serviceSubnets:
+  - 10.96.0.0/12
 ---
 apiVersion: v1alpha1
 kind: DiscoveryServiceConfig
