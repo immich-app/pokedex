@@ -12,6 +12,10 @@ spec:
   values:
     controllers:
       main:
+        replicas: 2
+        strategy: RollingUpdate
+        podDisruptionBudget:
+          maxUnavailable: 1
         containers:
           main:
             image:
@@ -23,6 +27,17 @@ spec:
               - --mirror-lfs-netloc=hf-cache.actions-cache.svc.cluster.local:8090
               - --repos-path=/data/repos
               - --cache-size-limit=600GB
+            probes:
+              readiness:
+                enabled: true
+    defaultPodOptions:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: hf-cache
     service:
       main:
         ports:
@@ -31,8 +46,8 @@ spec:
     persistence:
       data:
         enabled: true
-        storageClass: ceph-block
+        storageClass: ceph-filesystem
         size: 640Gi
-        accessMode: ReadWriteOnce
+        accessMode: ReadWriteMany
         globalMounts:
           - path: /data/repos
