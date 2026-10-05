@@ -7,3 +7,21 @@ spec:
   selectors:
     - cel:
         expression: device.driver == 'gpu.intel.com' && device.attributes['gpu.intel.com'].pciId == '0x4e61'
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: dgpu-intel-alchemist
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.intel.com' && device.attributes['gpu.intel.com'].pciId.startsWith('0x56')
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: dgpu-intel-battlemage
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.intel.com' && device.attributes['gpu.intel.com'].pciId.startsWith('0xe2')
