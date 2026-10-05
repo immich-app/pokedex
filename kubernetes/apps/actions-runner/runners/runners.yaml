@@ -96,6 +96,28 @@ spec:
           memory: "8Gi"
       envFrom: []
 
+    - name: pokedex-dgpu-intel-alchemist
+      org: immich-app
+      gpu: dgpu-intel-alchemist
+      minRunners: 0
+      maxRunners: 1
+      resources:
+        limits:
+          cpu: "4"
+          memory: "8Gi"
+      envFrom: []
+
+    - name: pokedex-dgpu-intel-battlemage
+      org: immich-app
+      gpu: dgpu-intel-battlemage
+      minRunners: 0
+      maxRunners: 1
+      resources:
+        limits:
+          cpu: "4"
+          memory: "8Gi"
+      envFrom: []
+
     - name: pokedex-igpu-intel-jasperlake
       org: immich-app
       gpu: igpu-intel-jasperlake
