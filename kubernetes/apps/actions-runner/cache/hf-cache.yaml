@@ -16,7 +16,7 @@ spec:
           main:
             image:
               repository: docker.io/xiahan2019/olah
-              tag: 0.5.1@sha256:a5fec886e874ca978a8b011a231337a3d7c8da9ae8a6c283ba2030bf5d259a6b
+              tag: 0.5.2@sha256:143873776b9d41955763c0ef02e589949ab16b793aebdcde209317262da185cf
             args:
               - --host=0.0.0.0
               - --mirror-netloc=hf-cache.actions-cache.svc.cluster.local:8090
