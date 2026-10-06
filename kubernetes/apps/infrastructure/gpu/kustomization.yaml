@@ -8,3 +8,4 @@ resources:
   - ./amd/ks.yaml
   - ./nvidia/ks.yaml
   - ./intel/ks.yaml
+  - ./rebar/ks.yaml

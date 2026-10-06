@@ -1,0 +1,45 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: gpu-rebar
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gpu-rebar
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gpu-rebar
+    spec:
+      nodeSelector:
+        feature.node.kubernetes.io/pci-0300_8086.present: "true"
+      priorityClassName: system-node-critical
+      tolerations:
+        - operator: Exists
+      containers:
+        - name: rebar
+          image: docker.io/library/python:3.13-alpine@sha256:2d9aefe2fef018a7eb2c13064c89c71929800fd2e5dccdbf52ea5da5bb8d929a
+          command: ["python3", "-u", "/scripts/rebar.py"]
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              cpu: 1m
+              memory: 8Mi
+            limits:
+              memory: 64Mi
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+            - name: claims
+              mountPath: /var/lib/kubelet/plugins/gpu.intel.com
+              readOnly: true
+      volumes:
+        - name: scripts
+          configMap:
+            name: gpu-rebar
+        - name: claims
+          hostPath:
+            path: /var/lib/kubelet/plugins/gpu.intel.com
+            type: DirectoryOrCreate
