@@ -28,6 +28,19 @@ else
 fi
 """
 
+[tasks."talos:node-ip"]
+description = "Print a node's IP, or fail when it is not in the cluster"
+hide = true
+quiet = true
+usage = 'arg "<node>"'
+shell = "bash -c"
+run = """
+ip=$(kubectl get node "$usage_node" -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}' 2>/dev/null)
+# kube API down: fall back to Talos discovery
+[ -n "$ip" ] || ip=$(talosctl get members "$usage_node" -o jsonpath='{.spec.addresses[0]}' 2>/dev/null | grep -m1 .)
+[ -n "$ip" ] && echo "$ip"
+"""
+
 [tasks."talos:apply-node"]
 description = "Apply the machine config to one node; extra args go to talosctl apply-config (e.g. --dry-run)"
 dir = "talos"
@@ -37,10 +50,7 @@ arg "[args]..." var=#true
 '''
 shell = "bash -c"
 run = """
-ip=$(kubectl get node "$usage_node" -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}' 2>/dev/null)
-# kube API down: fall back to Talos discovery
-[ -n "$ip" ] || ip=$(talosctl get members "$usage_node" -o jsonpath='{.spec.addresses[0]}' 2>/dev/null | grep -m1 .)
-if [ -z "$ip" ]; then echo "  $usage_node is not in the cluster, skipping"; exit 0; fi
+ip=$(mise run talos:node-ip "$usage_node" 2>/dev/null) || { echo "  $usage_node is not in the cluster, skipping"; exit 0; }
 mise run talos:render "$usage_node" | talosctl -n "$ip" apply-config -f /dev/stdin $usage_args
 """
 
@@ -74,9 +84,7 @@ case "$image" in
   */"$schematic":*) ;;
   *) echo "nodes/$usage_node.yaml installs $image, but schematics/$usage_node.yaml is $schematic"; exit 1 ;;
 esac
-ip=$(kubectl get node "$usage_node" -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}' 2>/dev/null)
-# kube API down: fall back to Talos discovery
-[ -n "$ip" ] || ip=$(talosctl get members "$usage_node" -o jsonpath='{.spec.addresses[0]}' 2>/dev/null | grep -m1 .)
+ip=$(mise run talos:node-ip "$usage_node")
 mise run talos:apply-node "$usage_node"
 talosctl -n "$ip" upgrade --image "$image" $usage_args
 """
