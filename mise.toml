@@ -58,6 +58,29 @@ for f in nodes/*.yaml; do
 done
 """
 
+[tasks."talos:upgrade-node"]
+description = "Install a node's schematic: apply its config, then upgrade to its installer image; extra args go to talosctl upgrade (e.g. -m powercycle)"
+dir = "talos"
+usage = '''
+arg "<node>"
+arg "[args]..." var=#true
+'''
+shell = "bash -c"
+run = """
+set -e
+image=$(yq -r 'select(.kind == "UnattendedInstallConfig") | .installer.image' "nodes/$usage_node.yaml")
+schematic=$(curl -sfX POST --data-binary "@schematics/$usage_node.yaml" https://factory.talos.dev/schematics | yq -r .id)
+case "$image" in
+  */"$schematic":*) ;;
+  *) echo "nodes/$usage_node.yaml installs $image, but schematics/$usage_node.yaml is $schematic"; exit 1 ;;
+esac
+ip=$(kubectl get node "$usage_node" -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}' 2>/dev/null)
+# kube API down: fall back to Talos discovery
+[ -n "$ip" ] || ip=$(talosctl get members "$usage_node" -o jsonpath='{.spec.addresses[0]}' 2>/dev/null | grep -m1 .)
+mise run talos:apply-node "$usage_node"
+talosctl -n "$ip" upgrade --image "$image" $usage_args
+"""
+
 [tasks."talos:schematic"]
 description = "Print the Image Factory schematic ID for every node's schematics/<node>.yaml"
 dir = "talos"

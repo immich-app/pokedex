@@ -28,6 +28,7 @@ gets the worker subset. Control planes are static (bond0 + address); workers are
 - `mise run talos:apply-node <node> [args]` — render and `apply-config` to that node (targets its InternalIP; append `--dry-run` to preview)
 - `mise run talos:apply [args]` — apply to every node
 - `mise run talos:schematic` — print each node's Image Factory schematic ID (paste into `nodes/<node>.yaml`'s `install.image` when a schematic changes)
+- `mise run talos:upgrade-node <node> [args]` — apply the node's config, then reinstall it from its installer image; refuses if that image doesn't match `schematics/<node>.yaml` (append `-m powercycle` for a cold boot)
 
 Version bumps (Talos, Kubernetes) are tuppr's job; a schematic change needs a
-reinstall from the new installer image (`talosctl upgrade -i <image> -m powercycle`).
+reinstall from the new installer image (`mise run talos:upgrade-node <node> -m powercycle`).

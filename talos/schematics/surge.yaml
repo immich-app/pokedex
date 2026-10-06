@@ -1,5 +1,9 @@
 ---
 customization:
+  # BIOS P2.60 bug: the ME's Node Manager raises GPE 0x24 every second and the
+  # handler notifies a \_SB.PRAD that the firmware never ships, flooding dmesg.
+  extraKernelArgs:
+    - acpi_mask_gpe=0x24
   systemExtensions:
     officialExtensions:
       - siderolabs/intel-ucode
