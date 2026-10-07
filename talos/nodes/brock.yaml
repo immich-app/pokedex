@@ -21,7 +21,7 @@ name: nvidia_modeset
 apiVersion: v1alpha1
 kind: UnattendedInstallConfig
 installer:
-  image: factory.talos.dev/metal-installer/fe430a87927d3d8ee20141f5c8317f88330e190836abbf528a5fd58551f17107:v1.14.1
+  image: factory.talos.dev/metal-installer/fe430a87927d3d8ee20141f5c8317f88330e190836abbf528a5fd58551f17107:v1.14.2
 provisioning:
   diskSelector:
     match: 'disk.wwid == "naa.500a07511b44e04c"'

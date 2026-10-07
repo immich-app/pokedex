@@ -5,7 +5,7 @@ machine:
 apiVersion: v1alpha1
 kind: UnattendedInstallConfig
 installer:
-  image: factory.talos.dev/metal-installer/a512a88c30194cea1db40df34625f803f66313f372a54b4dbc8c252a4c188976:v1.14.1
+  image: factory.talos.dev/metal-installer/a512a88c30194cea1db40df34625f803f66313f372a54b4dbc8c252a4c188976:v1.14.2
 provisioning:
   diskSelector:
     match: 'disk.transport == "nvme" && !disk.readonly && !disk.cdrom'
