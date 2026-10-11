@@ -9,6 +9,7 @@ spec:
       gpu: ""
       minRunners: 0
       maxRunners: 8
+      scratch: 200Gi
       resources:
         limits:
           cpu: "4"
@@ -20,6 +21,7 @@ spec:
       gpu: ""
       minRunners: 0
       maxRunners: 16
+      scratch: 200Gi
       resources:
         limits:
           cpu: "4"
@@ -31,6 +33,7 @@ spec:
       gpu: ""
       minRunners: 0
       maxRunners: 8
+      scratch: 200Gi
       resources:
         limits:
           cpu: "8"
@@ -42,6 +45,7 @@ spec:
       gpu: ""
       minRunners: 0
       maxRunners: 6
+      scratch: 200Gi
       resources:
         limits:
           cpu: "8"
@@ -53,6 +57,7 @@ spec:
       gpu: ""
       minRunners: 0
       maxRunners: 2
+      scratch: 200Gi
       resources:
         limits:
           cpu: "24"
@@ -64,6 +69,7 @@ spec:
       gpu: ""
       minRunners: 0
       maxRunners: 1
+      scratch: 750Gi
       resources:
         limits:
           cpu: "80"
@@ -79,6 +85,7 @@ spec:
       gpu: dgpu-nvidia-ampere
       minRunners: 0
       maxRunners: 1
+      scratch: 200Gi
       resources:
         limits:
           cpu: "4"
@@ -90,6 +97,7 @@ spec:
       gpu: dgpu-nvidia-pascal
       minRunners: 0
       maxRunners: 1
+      scratch: 200Gi
       resources:
         limits:
           cpu: "4"
@@ -101,6 +109,7 @@ spec:
       gpu: dgpu-intel-alchemist
       minRunners: 0
       maxRunners: 1
+      scratch: 200Gi
       resources:
         limits:
           cpu: "4"
@@ -112,6 +121,7 @@ spec:
       gpu: dgpu-intel-battlemage
       minRunners: 0
       maxRunners: 1
+      scratch: 200Gi
       resources:
         limits:
           cpu: "4"
@@ -123,6 +133,7 @@ spec:
       gpu: igpu-intel-jasperlake
       minRunners: 0
       maxRunners: 1
+      scratch: 200Gi
       resources:
         limits:
           cpu: "2"
@@ -239,7 +250,7 @@ spec:
                       storageClassName: ceph-block
                       resources:
                         requests:
-                          storage: 200Gi
+                          storage: << inputs.scratch >>
               - name: dind-sock
                 emptyDir: {}
               - name: dind-externals
