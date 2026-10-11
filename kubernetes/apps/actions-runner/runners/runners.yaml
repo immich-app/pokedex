@@ -162,6 +162,9 @@ spec:
                 volumeMounts:
                   - name: dind-externals
                     mountPath: /home/runner/tmpDir
+            securityContext:
+              fsGroup: 123
+              fsGroupChangePolicy: OnRootMismatch
             containers:
               - name: runner
                 image: ghcr.io/immich-app/actions-runner:main
@@ -179,9 +182,20 @@ spec:
                     value: "http://hf-cache.actions-cache.svc.cluster.local:8090"
                   - name: HF_HUB_DISABLE_XET
                     value: "1"
+                  - name: HOME
+                    value: /scratch/home
+                  - name: TMPDIR
+                    value: /scratch/tmp
                 volumeMounts:
-                  - name: work
+                  - name: scratch
+                    mountPath: /scratch/home
+                    subPath: home
+                  - name: scratch
+                    mountPath: /scratch/tmp
+                    subPath: tmp
+                  - name: scratch
                     mountPath: /home/runner/_work
+                    subPath: work
                   - name: dind-sock
                     mountPath: /run/docker
                     readOnly: true
@@ -202,8 +216,9 @@ spec:
                 securityContext:
                   privileged: true
                 volumeMounts:
-                  - name: work
+                  - name: scratch
                     mountPath: /home/runner/_work
+                    subPath: work
                   - name: dind-sock
                     mountPath: /run/docker
                   - name: dind-externals
@@ -216,14 +231,28 @@ spec:
                     subPath: daemon.json
             resources: << inputs.resources | toYaml | nindent 14 >>
             volumes:
-              - name: work
-                emptyDir: {}
+              - name: scratch
+                ephemeral:
+                  volumeClaimTemplate:
+                    spec:
+                      accessModes: [ReadWriteOnce]
+                      storageClassName: ceph-block
+                      resources:
+                        requests:
+                          storage: 200Gi
               - name: dind-sock
                 emptyDir: {}
               - name: dind-externals
                 emptyDir: {}
               - name: varlibdocker
-                emptyDir: {}
+                ephemeral:
+                  volumeClaimTemplate:
+                    spec:
+                      accessModes: [ReadWriteOnce]
+                      storageClassName: ceph-block
+                      resources:
+                        requests:
+                          storage: 200Gi
               - name: daemon-json
                 configMap:
                   name: docker-daemon-config
