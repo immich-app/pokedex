@@ -80,6 +80,22 @@ spec:
         - secretRef:
             name: pokedex-giant-bucket
 
+    - name: pokedex-massive-96
+      org: immich-app
+      gpu: ""
+      minRunners: 0
+      maxRunners: 1
+      scratch: 750Gi
+      resources:
+        limits:
+          cpu: "64"
+          memory: "96Gi"
+      envFrom:
+        - configMapRef:
+            name: pokedex-giant-bucket
+        - secretRef:
+            name: pokedex-giant-bucket
+
     - name: pokedex-giant
       org: immich-app
       gpu: ""
