@@ -17,3 +17,20 @@ spec:
       name: node-feature-discovery
       namespace: node-feature-discovery
   wait: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: node-feature-discovery-rules
+spec:
+  interval: 1h
+  path: ./kubernetes/apps/infrastructure/node-feature-discovery/node-feature-discovery/rules
+  prune: true
+  targetNamespace: node-feature-discovery
+  dependsOn:
+    - name: node-feature-discovery
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  wait: true

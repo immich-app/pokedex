@@ -177,6 +177,14 @@ spec:
           gateway:
             port: 8080
             instances: 2
+            placement:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: feature.node.kubernetes.io/network-speed
+                          operator: Gt
+                          values: ["9999"]
             resources:
               requests:
                 cpu: 100m
