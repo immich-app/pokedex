@@ -1,0 +1,19 @@
+---
+apiVersion: nfd.k8s-sigs.io/v1alpha1
+kind: NodeFeatureRule
+metadata:
+  name: network
+spec:
+  rules:
+    - name: network-speed
+      labelsTemplate: |
+        {{- $max := "" }}
+        {{- range .network.device }}
+        {{- if or (gt (len .speed) (len $max)) (and (eq (len .speed) (len $max)) (gt .speed $max)) }}{{ $max = .speed }}{{ end }}
+        {{- end }}
+        feature.node.kubernetes.io/network-speed={{ $max }}
+      matchFeatures:
+        - feature: network.device
+          matchExpressions:
+            operstate: {op: In, value: ["up"]}
+            speed: {op: Gt, value: ["0"]}
