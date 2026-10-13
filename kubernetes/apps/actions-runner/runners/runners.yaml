@@ -97,6 +97,7 @@ spec:
       gpu: dgpu-nvidia-turing
       minRunners: 0
       maxRunners: 1
+      scratch: 200Gi
       resources:
         limits:
           cpu: "4"
