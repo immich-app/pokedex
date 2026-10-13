@@ -4,7 +4,6 @@
     "local>immich-app/.github:renovate-config",
     "github>home-operations/renovate-presets//apps/talosFactory.json5"
   ],
-  "baseBranchPatterns": ["development"],
   "automerge": false,
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
