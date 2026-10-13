@@ -92,6 +92,17 @@ spec:
           memory: "8Gi"
       envFrom: []
 
+    - name: pokedex-dgpu-nvidia-turing
+      org: immich-app
+      gpu: dgpu-nvidia-turing
+      minRunners: 0
+      maxRunners: 1
+      resources:
+        limits:
+          cpu: "4"
+          memory: "8Gi"
+      envFrom: []
+
     - name: pokedex-dgpu-nvidia-pascal
       org: immich-app
       gpu: dgpu-nvidia-pascal
