@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: ghcr.io/bo0tzz/loopdedupe
-              tag: 0.0.13@sha256:524b9c9aa462fc2b55342c3adfdbf1f41b72055140890187aadda9a429bdfdf2
+              tag: 0.0.14@sha256:b7d14c78acf93c04811b44e6a0a08bde10e70b5b6b0527f35a7d17b7bb9390f3
             env:
               ENVIRONMENT: production
               DATABASE_URL:
