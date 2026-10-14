@@ -90,3 +90,9 @@ apiVersion: v1alpha1
 kind: KubeProxyConfig
 enabled: false
 image: registry.k8s.io/kube-proxy:v1.37.0
+---
+apiVersion: v1alpha1
+kind: UdevRulesConfig
+rules:
+  # Power-loss-protected drives only: write through stops the kernel sending cache flushes.
+  - ACTION=="add|change", SUBSYSTEM=="block", ENV{DEVTYPE}=="disk", ATTRS{model}=="Micron_5[12]00_MTFD*", ATTR{queue/write_cache}="write through"
