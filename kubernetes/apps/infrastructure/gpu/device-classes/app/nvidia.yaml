@@ -25,3 +25,12 @@ spec:
   selectors:
     - cel:
         expression: device.driver == 'gpu.nvidia.com' && device.attributes['gpu.nvidia.com'].architecture == 'Turing'
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: dgpu-nvidia-blackwell
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.nvidia.com' && device.attributes['gpu.nvidia.com'].architecture == 'Blackwell'

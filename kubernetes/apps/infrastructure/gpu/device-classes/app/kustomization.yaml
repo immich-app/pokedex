@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - ./nvidia.yaml
   - ./intel.yaml
+  - ./amd.yaml

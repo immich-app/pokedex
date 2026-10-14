@@ -25,3 +25,48 @@ spec:
   selectors:
     - cel:
         expression: device.driver == 'gpu.intel.com' && device.attributes['gpu.intel.com'].pciId.startsWith('0xe2')
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: igpu-intel-skylake
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.intel.com' && device.attributes['gpu.intel.com'].pciId == '0x193b'
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: igpu-intel-coffeelake
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.intel.com' && device.attributes['gpu.intel.com'].pciId == '0x3ea5'
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: igpu-intel-tigerlake
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.intel.com' && device.attributes['gpu.intel.com'].pciId == '0x9a49'
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: igpu-intel-alderlake-n
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.intel.com' && device.attributes['gpu.intel.com'].pciId == '0x46d1'
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: igpu-intel-arrowlake
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.intel.com' && device.attributes['gpu.intel.com'].pciId == '0x7d67'

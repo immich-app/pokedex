@@ -1,0 +1,54 @@
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: dgpu-amd-rdna1
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.amd.com' && device.attributes['gpu.amd.com'].deviceID == '0x731f'
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: dgpu-amd-rdna2
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.amd.com' && device.attributes['gpu.amd.com'].deviceID == '0x73ff'
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: dgpu-amd-rdna3
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.amd.com' && device.attributes['gpu.amd.com'].deviceID == '0x7480'
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: dgpu-amd-rdna4
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.amd.com' && device.attributes['gpu.amd.com'].deviceID == '0x7590'
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: igpu-amd-phoenix
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.amd.com' && device.attributes['gpu.amd.com'].deviceID == '0x15bf'
+---
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: igpu-amd-picasso
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == 'gpu.amd.com' && device.attributes['gpu.amd.com'].deviceID == '0x15d8'
