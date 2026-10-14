@@ -54,6 +54,7 @@ spec:
           limits:
             memory: 8Gi
       storage:
+        allowDeviceClassUpdate: true
         useAllNodes: false
         useAllDevices: false
         nodes:
@@ -63,7 +64,11 @@ spec:
               - name: "/dev/disk/by-id/wwn-0x500a07511a07d261"
               - name: "/dev/disk/by-id/wwn-0x500a07511b44df71"
               - name: "/dev/disk/by-id/wwn-0x500a075128f3243c"
+                config:
+                  deviceClass: fast
               - name: "/dev/disk/by-id/wwn-0x500a075128f324e2"
+                config:
+                  deviceClass: fast
           - name: "surge"
             devices:
               - name: "/dev/disk/by-id/wwn-0x500a07511a07d234"
@@ -71,14 +76,26 @@ spec:
               - name: "/dev/disk/by-id/wwn-0x500a07511b44deec"
               - name: "/dev/disk/by-id/wwn-0x500a07511b44c4a3"
               - name: "/dev/disk/by-id/wwn-0x500a075121a496d5"
+                config:
+                  deviceClass: fast
           - name: "misty"
             devices:
               - name: "/dev/disk/by-id/wwn-0x500a07511a07d222"
               - name: "/dev/disk/by-id/wwn-0x5001173100400e03"
+                config:
+                  deviceClass: fast
               - name: "/dev/disk/by-id/wwn-0x50011731005071c0"
+                config:
+                  deviceClass: fast
               - name: "/dev/disk/by-id/wwn-0x50011731004fd770"
+                config:
+                  deviceClass: fast
               - name: "/dev/disk/by-id/wwn-0x50011731004fd920"
+                config:
+                  deviceClass: fast
               - name: "/dev/disk/by-id/wwn-0x50011731004fe234"
+                config:
+                  deviceClass: fast
               - name: "/dev/disk/by-id/wwn-0x500a075119f6143c"
         config:
           osdsPerDevice: "1"
@@ -92,6 +109,34 @@ spec:
           enabled: true
           name: ceph-block
           isDefault: true
+          reclaimPolicy: Delete
+          allowVolumeExpansion: true
+          volumeBindingMode: Immediate
+          mountOptions:
+            - discard
+          parameters:
+            imageFormat: "2"
+            imageFeatures: layering,fast-diff,object-map,deep-flatten,exclusive-lock
+            csi.storage.k8s.io/provisioner-secret-name: rook-csi-rbd-provisioner
+            csi.storage.k8s.io/provisioner-secret-namespace: "{{ .Release.Namespace }}"
+            csi.storage.k8s.io/controller-expand-secret-name: rook-csi-rbd-provisioner
+            csi.storage.k8s.io/controller-expand-secret-namespace: "{{ .Release.Namespace }}"
+            csi.storage.k8s.io/node-stage-secret-name: rook-csi-rbd-node
+            csi.storage.k8s.io/node-stage-secret-namespace: "{{ .Release.Namespace }}"
+            csi.storage.k8s.io/fstype: ext4
+      - name: ceph-scratch
+        spec:
+          deviceClass: fast
+          failureDomain: host
+          replicated:
+            size: 2
+          parameters:
+            min_size: "1"
+            pg_num_min: "256"
+        storageClass:
+          enabled: true
+          name: ceph-scratch
+          isDefault: false
           reclaimPolicy: Delete
           allowVolumeExpansion: true
           volumeBindingMode: Immediate
