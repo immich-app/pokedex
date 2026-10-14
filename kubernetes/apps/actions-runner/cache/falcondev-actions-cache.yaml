@@ -21,6 +21,16 @@ spec:
               API_BASE_URL: "http://actions-cache.actions-cache.svc.cluster.local:3000"
               STORAGE_FILESYSTEM_PATH: "/data/cache"
               DB_SQLITE_PATH: "/data/sqlite.db"
+    defaultPodOptions:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: feature.node.kubernetes.io/network-speed
+                    operator: Gt
+                    values: ["9999"]
     service:
       main:
         ports:
