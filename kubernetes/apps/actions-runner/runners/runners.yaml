@@ -92,6 +92,18 @@ spec:
           memory: "8Gi"
       envFrom: []
 
+    - name: pokedex-dgpu-nvidia-blackwell
+      org: immich-app
+      gpu: dgpu-nvidia-blackwell
+      minRunners: 0
+      maxRunners: 1
+      scratch: 200Gi
+      resources:
+        limits:
+          cpu: "4"
+          memory: "8Gi"
+      envFrom: []
+
     - name: pokedex-dgpu-nvidia-turing
       org: immich-app
       gpu: dgpu-nvidia-turing
@@ -150,6 +162,138 @@ spec:
         limits:
           cpu: "2"
           memory: "4Gi"
+      envFrom: []
+
+    - name: pokedex-igpu-intel-skylake
+      org: immich-app
+      gpu: igpu-intel-skylake
+      minRunners: 0
+      maxRunners: 1
+      scratch: 200Gi
+      resources:
+        limits:
+          cpu: "2"
+          memory: "4Gi"
+      envFrom: []
+
+    - name: pokedex-igpu-intel-coffeelake
+      org: immich-app
+      gpu: igpu-intel-coffeelake
+      minRunners: 0
+      maxRunners: 1
+      scratch: 200Gi
+      resources:
+        limits:
+          cpu: "2"
+          memory: "4Gi"
+      envFrom: []
+
+    - name: pokedex-igpu-intel-tigerlake
+      org: immich-app
+      gpu: igpu-intel-tigerlake
+      minRunners: 0
+      maxRunners: 1
+      scratch: 200Gi
+      resources:
+        limits:
+          cpu: "2"
+          memory: "4Gi"
+      envFrom: []
+
+    - name: pokedex-igpu-intel-alderlake-n
+      org: immich-app
+      gpu: igpu-intel-alderlake-n
+      minRunners: 0
+      maxRunners: 1
+      scratch: 200Gi
+      resources:
+        limits:
+          cpu: "2"
+          memory: "4Gi"
+      envFrom: []
+
+    - name: pokedex-igpu-intel-arrowlake
+      org: immich-app
+      gpu: igpu-intel-arrowlake
+      minRunners: 0
+      maxRunners: 1
+      scratch: 200Gi
+      resources:
+        limits:
+          cpu: "2"
+          memory: "4Gi"
+      envFrom: []
+
+    - name: pokedex-dgpu-amd-rdna1
+      org: immich-app
+      gpu: dgpu-amd-rdna1
+      minRunners: 0
+      maxRunners: 1
+      scratch: 200Gi
+      resources:
+        limits:
+          cpu: "4"
+          memory: "8Gi"
+      envFrom: []
+
+    - name: pokedex-dgpu-amd-rdna2
+      org: immich-app
+      gpu: dgpu-amd-rdna2
+      minRunners: 0
+      maxRunners: 1
+      scratch: 200Gi
+      resources:
+        limits:
+          cpu: "4"
+          memory: "8Gi"
+      envFrom: []
+
+    - name: pokedex-dgpu-amd-rdna3
+      org: immich-app
+      gpu: dgpu-amd-rdna3
+      minRunners: 0
+      maxRunners: 1
+      scratch: 200Gi
+      resources:
+        limits:
+          cpu: "4"
+          memory: "8Gi"
+      envFrom: []
+
+    - name: pokedex-dgpu-amd-rdna4
+      org: immich-app
+      gpu: dgpu-amd-rdna4
+      minRunners: 0
+      maxRunners: 1
+      scratch: 200Gi
+      resources:
+        limits:
+          cpu: "4"
+          memory: "8Gi"
+      envFrom: []
+
+    - name: pokedex-igpu-amd-phoenix
+      org: immich-app
+      gpu: igpu-amd-phoenix
+      minRunners: 0
+      maxRunners: 1
+      scratch: 200Gi
+      resources:
+        limits:
+          cpu: "2"
+          memory: "4Gi"
+      envFrom: []
+
+    - name: pokedex-igpu-amd-picasso
+      org: immich-app
+      gpu: igpu-amd-picasso
+      minRunners: 0
+      maxRunners: 1
+      scratch: 200Gi
+      resources:
+        limits:
+          cpu: "2"
+          memory: "3Gi"
       envFrom: []
 
   resourcesTemplate: |
