@@ -6,6 +6,7 @@ helmfile = "1.8.1"
 helm = "4.3.0"
 usage = "6.12.0"
 flux2 = "2.9.2"
+"github:home-operations/flate" = "v0.6.5"
 
 [env]
 TALOSCONFIG = "{{ config_root }}/talos/clusterconfig/talosconfig"
@@ -103,3 +104,7 @@ trap 'rm -f "$KUBECONFIG"' EXIT
 talosctl kubeconfig -n "$(talosctl config info -o yaml | yq -r '.endpoints[0]')" "$KUBECONFIG"
 helmfile --kubeconfig "$KUBECONFIG" --file '{{ config_root }}/bootstrap/helmfile.yaml' sync
 """
+
+[tasks."kube:diff"]
+description = "Diff the rendered Flux resources against main"
+run = "flate diff all --path ./kubernetes/flux/cluster --base main"
