@@ -54,7 +54,6 @@ spec:
           limits:
             memory: 8Gi
       storage:
-        allowDeviceClassUpdate: true
         useAllNodes: false
         useAllDevices: false
         nodes:
