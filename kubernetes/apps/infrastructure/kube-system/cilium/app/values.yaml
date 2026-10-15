@@ -11,6 +11,10 @@ k8sServicePort: 7445
 
 kubeProxyReplacement: true
 
+loadBalancer:
+  # Needed for Services with trafficDistribution: PreferSameNode (the RGW).
+  serviceTopology: true
+
 l2announcements:
   enabled: true
 k8sClientRateLimit:
