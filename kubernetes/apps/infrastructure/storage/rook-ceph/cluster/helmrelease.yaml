@@ -221,7 +221,9 @@ spec:
           preservePoolsOnDelete: true
           gateway:
             port: 8080
-            instances: 2
+            instances: 3
+            service:
+              trafficDistribution: PreferSameNode
             placement:
               nodeAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
@@ -230,6 +232,14 @@ spec:
                         - key: feature.node.kubernetes.io/network-speed
                           operator: Gt
                           values: ["9999"]
+              topologySpreadConstraints:
+                - maxSkew: 1
+                  topologyKey: kubernetes.io/hostname
+                  whenUnsatisfiable: DoNotSchedule
+                  labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/name: ceph-rgw
+                      app.kubernetes.io/part-of: ceph-objectstore
             resources:
               requests:
                 cpu: 100m
