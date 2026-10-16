@@ -36,5 +36,5 @@ port: 7445
 ---
 apiVersion: v1alpha1
 kind: KubeletConfig
-image: ghcr.io/siderolabs/kubelet:v1.37.0
+image: ghcr.io/siderolabs/kubelet:v1.37.1@sha256:3777bdaaa352e1f425dff9d8868a970923c66d0629bad16f935c41018a83d9d8
 defaultRuntimeSeccompProfileEnabled: true
