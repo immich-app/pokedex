@@ -1,0 +1,54 @@
+name: Flate
+
+on:
+  pull_request:
+    paths:
+      - kubernetes/**
+      - .github/workflows/flate.yml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  diff:
+    name: Flate Diff
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup mise
+        uses: immich-app/devtools/actions/use-mise@caac7f7e4298458a14238959504f411fc6cc7f06 # use-mise-action-v3.2.3
+        with:
+          github_token: ${{ github.token }}
+
+      - name: Run flate diff
+        id: diff
+        run: |
+          mise run kube:diff --output github > diff.txt
+          [[ -s diff.txt ]] || exit 0
+
+          delim="EOF_$(openssl rand -hex 8)"
+          {
+            echo "comment<<$delim"
+            echo '```diff'
+            cat diff.txt
+            echo '```'
+            echo "$delim"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Update PR comment
+        uses: immich-app/devtools/actions/sticky-comment@5f79a5a552b30a23aa7984ffa06c3dbfaf4330f6 # sticky-comment-action-v1.1.0
+        with:
+          id: flate
+          body: ${{ steps.diff.outputs.comment }}
+          delete: ${{ steps.diff.outputs.comment == '' }}
