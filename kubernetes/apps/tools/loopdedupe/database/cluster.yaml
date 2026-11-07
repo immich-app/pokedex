@@ -8,6 +8,8 @@ spec:
   enablePDB: false
   imageName: ghcr.io/cloudnative-pg/postgresql:18-standard-trixie
   postgresql:
+    parameters:
+      shared_buffers: 512MB
     shared_preload_libraries:
       - "vchord.so"
     extensions:
@@ -23,7 +25,7 @@ spec:
     size: 10Gi
   resources:
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 500m
+      memory: 2Gi
     limits:
-      memory: 512Mi
+      memory: 2Gi
