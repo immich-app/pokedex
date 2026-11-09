@@ -227,3 +227,18 @@ spec:
       app.kubernetes.io/name: victoria-logs-collector
   podMetricsEndpoints:
     - port: http
+---
+# The talos-logs relay's own metrics: events sent and dropped, sink errors,
+# buffer size. hostNetwork, so the target is the node IP.
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMPodScrape
+metadata:
+  name: talos-logs
+spec:
+  namespaceSelector:
+    matchNames: [observability]
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: talos-logs
+  podMetricsEndpoints:
+    - port: metrics

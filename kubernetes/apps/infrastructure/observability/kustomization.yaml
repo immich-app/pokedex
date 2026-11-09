@@ -6,3 +6,4 @@ resources:
   - namespace.yaml
   - ./vmagent/ks.yaml
   - ./victoria-logs-collector/ks.yaml
+  - ./talos-logs/ks.yaml

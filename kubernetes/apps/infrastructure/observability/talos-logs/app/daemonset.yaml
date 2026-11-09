@@ -1,0 +1,89 @@
+---
+# One Vector per node, receiving that node's Talos service and kernel logs on
+# loopback and shipping them to o11y (vector.yaml says why Talos needs a relay).
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: talos-logs
+  labels:
+    app.kubernetes.io/name: talos-logs
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: talos-logs
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: talos-logs
+    spec:
+      # Talos sends to 127.0.0.1, which is only the node's in its network
+      # namespace.
+      hostNetwork: true
+      # The node's resolver (Talos host DNS, which CoreDNS forwards to anyway),
+      # so shipping doesn't depend on CoreDNS.
+      dnsPolicy: Default
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      # Every node, GPU or not: node logs matter most on a struggling one.
+      priorityClassName: system-node-critical
+      tolerations:
+        - operator: Exists
+      containers:
+        - name: vector
+          image: docker.io/timberio/vector:0.61.0-distroless-static@sha256:6901c28cc86ed3d41880198dad12ba7b6df83efdf9c61c0c175d23980689a16f
+          args: ["--config", "/etc/vector/vector.yaml"]
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          ports:
+            - name: metrics
+              containerPort: 9598
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: metrics
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: config
+              mountPath: /etc/vector
+              readOnly: true
+            - name: data
+              mountPath: /var/lib/talos-logs
+            - name: remote-write
+              mountPath: /secrets/remote-write
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: talos-logs
+        # Vector's disk buffer, on the node so lines not yet shipped survive
+        # a pod restart.
+        - name: data
+          hostPath:
+            path: /var/lib/talos-logs
+            type: DirectoryOrCreate
+        # The same token the vmagent and the pod log collector use.
+        - name: remote-write
+          secret:
+            secretName: vmagent-remote-write
+            items:
+              - key: token
+                path: token
