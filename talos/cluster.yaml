@@ -5,6 +5,13 @@ persist: true
 machine:
   features:
     diskQuotaSupport: true
+  # Talos's service logs (machined, kubelet, etcd, containerd...) to the
+  # talos-logs relay on loopback (kubernetes/apps/infrastructure/observability/
+  # talos-logs), which ships them to o11y. Kernel logs: KmsgLogConfig below.
+  logging:
+    destinations:
+      - endpoint: tcp://127.0.0.1:6050/
+        format: json_lines
 ---
 apiVersion: v1alpha1
 kind: KubeClusterConfig
@@ -38,3 +45,11 @@ apiVersion: v1alpha1
 kind: KubeletConfig
 image: ghcr.io/siderolabs/kubelet:v1.37.0
 defaultRuntimeSeccompProfileEnabled: true
+---
+# The kernel ring buffer (OOM kills, link and disk errors) to the same relay.
+# Talos reads it from the start and holds delivery until the relay accepts, so
+# boot messages arrive once it is up.
+apiVersion: v1alpha1
+kind: KmsgLogConfig
+name: talos-logs
+url: tcp://127.0.0.1:6051/

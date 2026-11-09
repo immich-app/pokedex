@@ -1,0 +1,114 @@
+# Relays each node's own logs to o11y's VictoriaLogs. Talos services (machined,
+# kubelet, etcd, containerd, apid...) and the kernel ring buffer never reach
+# the pod log collector: they never touch /var/log/pods. Talos can only send them
+# as JSON lines over TCP or UDP (machine.logging and KmsgLogConfig in
+# talos/cluster.yaml). VictoriaLogs and vlagent can't read that (their only
+# raw-socket listener is syslog), so this receives them on loopback and posts
+# them to /insert/jsonline. Same design as bootstrap's talos-logs.
+#
+# No Vector env interpolation: identity is fixed here, as in the pod log
+# collector's extraFields; the node name comes from get_env_var and the token
+# from the directory secret backend.
+data_dir: /var/lib/talos-logs
+
+secret:
+  remote_write:
+    type: directory
+    path: /secrets/remote-write
+    remove_trailing_whitespace: true
+
+sources:
+  talos_services:
+    type: socket
+    mode: tcp
+    address: 127.0.0.1:6050
+    framing:
+      method: newline_delimited
+    decoding:
+      codec: json
+  talos_kernel:
+    type: socket
+    mode: tcp
+    address: 127.0.0.1:6051
+    framing:
+      method: newline_delimited
+    decoding:
+      codec: json
+  vector_metrics:
+    type: internal_metrics
+
+transforms:
+  talos:
+    type: remap
+    inputs: [talos_services, talos_kernel]
+    source: |
+      # machined also replays the kernel ring buffer as a "kernel" service, as
+      # text and stamped with the replay time. The kmsg input carries the same
+      # lines with their own timestamps, facility and priority; keep those.
+      if ."talos-service" == "kernel" {
+        abort
+      }
+      # The console dashboard polls machined every second, about 5 lines a
+      # second per node: each call succeeds under its own role and is logged
+      # twice by the authorizers. Keep everything else, including talosctl's
+      # calls through apid.
+      if ."talos-service" == "machined" && is_string(.msg) {
+        m = string!(.msg)
+        if (contains(m, " unary Success ") && contains(m, "talos-role=os:meta:writer,os:reader;")) ||
+          contains(m, "includes [os:meta:writer os:reader])") ||
+          contains(m, "match with service \"dashboard\"") {
+          abort
+        }
+      }
+      # Kernel lines end in a newline.
+      if is_string(.msg) {
+        .msg = replace!(.msg, r'\n$', "")
+      }
+      # The socket source's own metadata: the peer is always loopback.
+      del(.host)
+      del(.port)
+      del(.source_type)
+      del(.timestamp)
+      # Talos's "talos-time" and "msg" become _time and _msg (the sink's query
+      # args); "level" is what Grafana colours lines by.
+      if exists(."talos-level") {
+        .level = del(."talos-level")
+      }
+      # The pod log collector's identity fields, plus the node.
+      .project = "immich"
+      .env = "prod"
+      .cluster = "pokedex"
+      .provider = "int"
+      .region = "aus"
+      .node = get_env_var!("NODE_NAME")
+
+sinks:
+  victorialogs:
+    type: http
+    inputs: [talos]
+    # o11y's remote-clusters vmauth user routes /insert/jsonline to
+    # VictoriaLogs. Kernel lines have facility and no talos-service, service
+    # lines the reverse, so each node gets one stream per service plus one per
+    # facility.
+    uri: https://vmauth.futostatus.com/insert/jsonline?_msg_field=msg&_time_field=talos-time&_stream_fields=cluster,node,talos-service,facility
+    method: post
+    compression: gzip
+    encoding:
+      codec: json
+    framing:
+      method: newline_delimited
+    auth:
+      strategy: bearer
+      token: SECRET[remote_write.token]
+    healthcheck:
+      enabled: false
+    # Rides out an o11y outage. Vector's minimum disk buffer. Drops the newest
+    # lines when full, rather than block and push back on Talos's senders.
+    buffer:
+      type: disk
+      max_size: 268435488
+      when_full: drop_newest
+  metrics:
+    type: prometheus_exporter
+    inputs: [vector_metrics]
+    address: 0.0.0.0:9598
