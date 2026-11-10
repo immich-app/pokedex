@@ -1,0 +1,31 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/cilium.io/ciliumnetworkpolicy_v2.json
+# The relay's TCP input takes unauthenticated JSON and stamps it as this node's
+# Talos logs, so only Talos's own senders, in the host network namespace of
+# the same node, may reach it. The HTTP port (metrics, health) is open to the
+# vmagent scrape and the kubelet probes in-cluster. Egress stays open for the
+# public vmauth. Cilium runs in the default enforcement mode, so selecting the
+# pods turns on ingress enforcement for them.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: talos-logs-ingress
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: fluent-bit
+      app.kubernetes.io/instance: talos-logs
+  ingress:
+    - fromEntities:
+        - host
+      toPorts:
+        - ports:
+            - port: "6050"
+              protocol: TCP
+    - fromEntities:
+        - cluster
+        - health
+      toPorts:
+        - ports:
+            - port: "2020"
+              protocol: TCP

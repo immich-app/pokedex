@@ -228,8 +228,8 @@ spec:
   podMetricsEndpoints:
     - port: http
 ---
-# The talos-logs relay's own metrics: events sent and dropped, sink errors,
-# buffer size. hostNetwork, so the target is the node IP.
+# The talos-logs relay's own metrics (Fluent Bit): records out, output errors
+# and retries, disk-queue chunks.
 apiVersion: operator.victoriametrics.com/v1beta1
 kind: VMPodScrape
 metadata:
@@ -239,6 +239,8 @@ spec:
     matchNames: [observability]
   selector:
     matchLabels:
-      app.kubernetes.io/name: talos-logs
+      app.kubernetes.io/name: fluent-bit
+      app.kubernetes.io/instance: talos-logs
   podMetricsEndpoints:
-    - port: metrics
+    - port: http
+      path: /api/v2/metrics/prometheus
