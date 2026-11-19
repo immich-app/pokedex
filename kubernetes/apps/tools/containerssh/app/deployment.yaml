@@ -18,7 +18,7 @@ spec:
       serviceAccountName: containerssh
       containers:
         - name: containerssh
-          image: containerssh/containerssh:v0.5.2@sha256:8abfc0468975df8d9114829486636424eba87dfd55f3f8da3ce5e74ce052cb75
+          image: containerssh/containerssh:v0.6.1@sha256:d1f33a6103f60cf44ac9d76a860d26b297f11cc127f69bbec29df826256a88ea
           securityContext:
             readOnlyRootFilesystem: true
             runAsNonRoot: true
