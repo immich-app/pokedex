@@ -17,3 +17,13 @@ spec:
           matchExpressions:
             operstate: {op: In, value: ["up"]}
             speed: {op: Gt, value: ["0"]}
+    # A plain label for selectors that can't compare numbers, like the
+    # nodeSelector of Cilium's L2 announcement policy.
+    - name: network-fast
+      labels:
+        feature.node.kubernetes.io/network-fast: "true"
+      matchFeatures:
+        - feature: network.device
+          matchExpressions:
+            operstate: {op: In, value: ["up"]}
+            speed: {op: Gt, value: ["9999"]}
