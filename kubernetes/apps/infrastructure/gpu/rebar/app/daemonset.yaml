@@ -19,7 +19,7 @@ spec:
         - operator: Exists
       containers:
         - name: rebar
-          image: docker.io/library/python:3.13-alpine@sha256:2d9aefe2fef018a7eb2c13064c89c71929800fd2e5dccdbf52ea5da5bb8d929a
+          image: docker.io/library/python:3.15-alpine@sha256:0f9552bb28711333da16915ec146f5e6bb44a7fdac9ced15dc17c2e0206346dd
           command: ["python3", "-u", "/scripts/rebar.py"]
           securityContext:
             privileged: true
