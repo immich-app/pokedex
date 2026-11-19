@@ -107,4 +107,4 @@ helmfile --kubeconfig "$KUBECONFIG" --file '{{ config_root }}/bootstrap/helmfile
 
 [tasks."kube:diff"]
 description = "Diff the rendered Flux resources against main"
-run = "flate diff all --path ./kubernetes/flux/cluster --base main"
+run = "flate diff all --path ./kubernetes/flux/cluster --base main --disable-chart-digest-tracking"
