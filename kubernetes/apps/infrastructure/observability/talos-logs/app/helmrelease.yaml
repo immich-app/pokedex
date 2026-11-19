@@ -1,0 +1,191 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+# Relays the Talos service and kernel logs of each node to o11y's
+# VictoriaLogs. Talos can only send them as JSON lines over TCP (machine.logging
+# and KmsgLogConfig in talos/cluster.yaml), and VictoriaLogs reads only syslog
+# on a raw socket, so Fluent Bit translates. Same setup as the o11y cluster's
+# talos-logs (immich-app/futo-o11y-platform).
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: talos-logs
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: talos-logs
+  interval: 1h
+  values:
+    fullnameOverride: talos-logs
+
+    serviceAccount:
+      create: false
+      automountServiceAccountToken: false
+    rbac:
+      create: false
+
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop: [ALL]
+
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        memory: 128Mi
+
+    # Every node, GPU or not: node logs matter most on a struggling one, and a
+    # node without its relay pod has nowhere to send them (the Local policy
+    # below).
+    priorityClassName: system-node-critical
+    tolerations:
+      - operator: Exists
+
+    env:
+      - name: NODE_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: spec.nodeName
+      # The same token the vmagent and the pod log collector use.
+      - name: VL_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: vmagent-remote-write
+            key: token
+
+    extraPorts:
+      - name: talos
+        port: 6050
+        containerPort: 6050
+        protocol: TCP
+
+    # Talos sends to this IP from the host network namespace, where cluster
+    # DNS does not resolve; talos/cluster.yaml holds the same value. Cilium's
+    # socket LB translates the connect() there, and with the Local policy each
+    # agent programs only the pod on its own node, which stamps the node name.
+    service:
+      clusterIP: 10.96.0.60
+      internalTrafficPolicy: Local
+
+    # No prometheus-operator CRDs here: the VMPodScrape in
+    # vmagent/scrapes/scrapes.yaml scrapes the pods instead.
+    serviceMonitor:
+      enabled: false
+
+    # The disk queue lives on the node, so unsent lines survive a pod restart.
+    # The directory is owned by root, so the container keeps the root user of
+    # the image.
+    daemonSetVolumes:
+      - name: data
+        hostPath:
+          path: /var/lib/talos-logs
+          type: DirectoryOrCreate
+    daemonSetVolumeMounts:
+      - name: data
+        mountPath: /var/lib/talos-logs
+
+    # Kernel lines end in a newline.
+    luaScripts:
+      strip_newline.lua: |
+        function strip_newline(tag, ts, record)
+          local m = record["msg"]
+          if type(m) == "string" and m:sub(-1) == "\n" then
+            record["msg"] = m:sub(1, -2)
+            return 2, ts, record
+          end
+          return 0, ts, record
+        end
+
+    config:
+      # The block of the chart sets Health_Check On. With that setting, errors
+      # from VictoriaLogs fail the readiness probe, the Service drops the pod,
+      # and Talos cannot hand over lines during an outage. The default retry
+      # back-off grows to 2000s. A cap of 30s keeps recovery under a minute.
+      # A chunk is about 2MB and every chunk that is up is mapped in memory.
+      # The defaults (128 chunks up, a 100MB backlog queue at start) exceed
+      # the 128Mi memory limit during a backlog; these keep it near 50MB.
+      service: |
+        [SERVICE]
+            Flush 5
+            HTTP_Server On
+            HTTP_Port {{ .Values.metricsPort }}
+            storage.path /var/lib/talos-logs
+            storage.max_chunks_up 16
+            storage.backlog.mem_limit 16M
+            scheduler.cap 30
+
+      # A Talos line is at most 64KiB. A line that is larger than Buffer_Size
+      # closes the connection, and the line is lost.
+      inputs: |
+        [INPUT]
+            Name tcp
+            Alias talos
+            Tag talos
+            Port 6050
+            Buffer_Size 128
+            Chunk_Size 64
+            storage.type filesystem
+
+      # machined replays the kernel ring buffer as a "kernel" service, as text
+      # with the replay time. The kmsg input sends the same lines with their
+      # own time, facility and priority, so the copy from machined is dropped.
+      # The console dashboard polls machined every second, and the authorizers
+      # log each call twice. Only lines from machined match (Logical_Op and),
+      # so the calls from talosctl and tuppr through apid stay.
+      # Grafana colors lines by "level". The identity fields are the ones that
+      # victoria-logs-collector stamps on pod logs, plus the node.
+      filters: |
+        [FILTER]
+            Name grep
+            Match talos
+            Exclude $talos-service ^kernel$
+
+        [FILTER]
+            Name grep
+            Match talos
+            Logical_Op and
+            Exclude $talos-service ^machined$
+            Exclude $msg (unary\sSuccess\s.*talos-role=os:meta:writer,os:reader;|includes\s\[os:meta:writer\sos:reader\]\)|match\swith\sservice\s"dashboard")
+
+        [FILTER]
+            Name lua
+            Match talos
+            script /fluent-bit/scripts/strip_newline.lua
+            call strip_newline
+
+        [FILTER]
+            Name modify
+            Match talos
+            Hard_rename talos-level level
+            Set project immich
+            Set env prod
+            Set cluster pokedex
+            Set provider int
+            Set region aus
+            Set node ${NODE_NAME}
+
+      # o11y's public VMAuth, which routes /insert/jsonline for this token.
+      # Fluent Bit checks only the certificate chain unless told to check the
+      # hostname too, and this connection carries the bearer token.
+      # Kernel lines carry facility and no talos-service, service lines the
+      # reverse, so each node gets one stream per service and one per facility.
+      # When the disk queue is full, Fluent Bit drops the oldest chunk.
+      outputs: |
+        [OUTPUT]
+            Name http
+            Alias victorialogs
+            Match talos
+            Host vmauth.futostatus.com
+            Port 443
+            tls On
+            tls.verify On
+            tls.verify_hostname On
+            Header Authorization Bearer ${VL_TOKEN}
+            URI /insert/jsonline?_msg_field=msg&_time_field=talos-time&_stream_fields=cluster,node,talos-service,facility
+            Format json_lines
+            Json_date_key false
+            compress gzip
+            Retry_Limit no_limits
+            storage.total_limit_size 256M
