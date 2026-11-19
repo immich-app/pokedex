@@ -1,9 +1,13 @@
 ---
 customization:
-  # BIOS P2.60 bug: the ME's Node Manager raises GPE 0x24 every second and the
-  # handler notifies a \_SB.PRAD that the firmware never ships, flooding dmesg.
   extraKernelArgs:
+    # BIOS P2.60 bug: the ME's Node Manager raises GPE 0x24 every second and the
+    # handler notifies a \_SB.PRAD that the firmware never ships, flooding dmesg.
     - acpi_mask_gpe=0x24
+    # kexec skips the PCIe reset, and three of the AMD cards come back with
+    # their PSP/SMU wedged on every kexec reboot; disabling it makes reboots
+    # (incl. tuppr's) go through firmware.
+    - sysctl.kernel.kexec_load_disabled=1
   systemExtensions:
     officialExtensions:
       - siderolabs/intel-ucode
