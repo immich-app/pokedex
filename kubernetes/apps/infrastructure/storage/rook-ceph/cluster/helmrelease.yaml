@@ -228,9 +228,9 @@ spec:
                 requiredDuringSchedulingIgnoredDuringExecution:
                   nodeSelectorTerms:
                     - matchExpressions:
-                        - key: feature.node.kubernetes.io/network-speed
-                          operator: Gt
-                          values: ["9999"]
+                        - key: feature.node.kubernetes.io/network-fast
+                          operator: In
+                          values: ["true"]
               topologySpreadConstraints:
                 - maxSkew: 1
                   topologyKey: kubernetes.io/hostname

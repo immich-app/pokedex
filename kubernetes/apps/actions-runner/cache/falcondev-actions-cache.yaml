@@ -28,9 +28,9 @@ spec:
             - weight: 100
               preference:
                 matchExpressions:
-                  - key: feature.node.kubernetes.io/network-speed
-                    operator: Gt
-                    values: ["9999"]
+                  - key: feature.node.kubernetes.io/network-fast
+                    operator: In
+                    values: ["true"]
     service:
       main:
         ports:

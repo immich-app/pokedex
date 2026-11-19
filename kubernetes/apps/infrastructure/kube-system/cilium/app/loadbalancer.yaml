@@ -12,3 +12,7 @@ metadata:
   name: public-vip
 spec:
   loadBalancerIPs: true
+  # The announcer receives all VIP traffic (externalTrafficPolicy: Cluster).
+  nodeSelector:
+    matchLabels:
+      feature.node.kubernetes.io/network-fast: "true"
