@@ -11,6 +11,8 @@ spec:
   values:
     image:
       repository: ghcr.io/rook/ceph
+    csi:
+      createCsiOperatorResources: true
     resources:
       requests:
         memory: 128Mi
