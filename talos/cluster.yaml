@@ -43,7 +43,7 @@ port: 7445
 ---
 apiVersion: v1alpha1
 kind: KubeletConfig
-image: ghcr.io/siderolabs/kubelet:v1.37.0
+image: ghcr.io/siderolabs/kubelet:v1.37.2@sha256:d80d3843530cfae376a0814f73bcc4ac70e32bc157de777b38a90f33b82d1111
 defaultRuntimeSeccompProfileEnabled: true
 ---
 # The kernel ring buffer (OOM kills, link and disk errors) to the same relay.
