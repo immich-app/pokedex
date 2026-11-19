@@ -13,6 +13,10 @@ spec:
       repository: ghcr.io/rook/ceph
     csi:
       createCsiOperatorResources: true
+      # The default el10 cephcsi image needs x86-64-v3, which geodude lacks (ceph/ceph-csi#6612)
+      cephcsi:
+        repository: quay.io/cephcsi/cephcsi
+        tag: v3.18.2-rocky9
     resources:
       requests:
         memory: 128Mi
